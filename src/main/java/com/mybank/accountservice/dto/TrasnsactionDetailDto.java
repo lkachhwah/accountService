@@ -1,9 +1,12 @@
-package com.mybank.accountservice.db.model;
+package com.mybank.accountservice.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.mybank.accountservice.db.enums.CurrencyType;
+import com.mybank.accountservice.db.enums.TransactionStatus;
+import com.mybank.accountservice.db.enums.TransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,27 +20,16 @@ import lombok.ToString;
 @Data
 @ToString
 @Builder
-public class TrasnsactionDetails {
-
+public class TrasnsactionDetailDto {
 	
-	@NonNull
 	private String transactionId;
-	
-	@NonNull
 	private String  customerId;
-	@NonNull
-	private String accountNumber;
-	@NonNull
+	private String accountId;
 	private TransactionType transactionType;
-	
 	private String description;
-	
-	@NonNull
 	private Date trasactionDate;
-	
-	@NonNull
 	private BigDecimal amount;
-	
-	@NonNull
 	private TransactionStatus status;
+	private CurrencyType transactionCurrency;
+	private BigDecimal accountBalance;
 }

@@ -1,4 +1,4 @@
-package com.mybank.accountservice.db.model;
+package com.mybank.accountservice.db.enums;
 
 public enum TransactionStatus {
 

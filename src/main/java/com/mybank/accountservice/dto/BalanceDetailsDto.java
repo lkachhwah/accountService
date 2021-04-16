@@ -1,6 +1,4 @@
-package com.mybank.accountservice.db.model;
-
-
+package com.mybank.accountservice.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,6 +6,7 @@ import java.util.List;
 
 import com.mybank.accountservice.db.enums.AccountType;
 import com.mybank.accountservice.db.enums.CurrencyType;
+import com.mybank.accountservice.db.model.AccountDetail.AccountDetailBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,14 +20,7 @@ import lombok.ToString;
 @Data
 @ToString
 @Builder
-public class AccountDetail {
-	@NonNull
-	private String accountId;
-	@NonNull
-	private String customerId;
-	private String country;
-	private AccountType accountType;
-	private Date openedOnDate;
-	private BigDecimal balance; // main balance always be store in USD
-	private List<CurrencyType>  currencies;
+public class BalanceDetailsDto{
+	private BigDecimal amount;
+	private CurrencyType currency;
 }

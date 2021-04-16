@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
-import com.mybank.accountservice.db.model.CustomerDetails;
+import com.mybank.accountservice.db.model.CustomerDetail;
 
 @Mapper
 public interface CustomerDetailsMapper {
@@ -27,8 +27,8 @@ public interface CustomerDetailsMapper {
 		many = @Many(select = "com.mybank.accountservice.db.mapper.TransactionDetailsMapper.getTrasnsactionDetailsByCustomerId"))
 		
 	})
-	CustomerDetails getCustomerDetails(@Param("customerId") String customerId);
+	CustomerDetail getCustomerDetails(@Param("customerId") String customerId);
 	
 	@Insert("INSERT INTO CustomerDetails(customerId, name, emailId,gender,dob) VALUES (#{customerId}, #{name}, #{emailId},#{gender},#{dob})")
-	public void  insert(CustomerDetails  customerDetails);
+	public void  insert(CustomerDetail  customerDetails);
 }

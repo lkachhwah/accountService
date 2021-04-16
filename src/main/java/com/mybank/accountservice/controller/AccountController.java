@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mybank.accountservice.db.enums.AccountType;
+import com.mybank.accountservice.db.enums.GenderType;
+import com.mybank.accountservice.db.enums.TransactionStatus;
+import com.mybank.accountservice.db.enums.TransactionType;
 import com.mybank.accountservice.db.mapper.AccountDetailsMapper;
 import com.mybank.accountservice.db.mapper.CustomerDetailsMapper;
 import com.mybank.accountservice.db.mapper.TransactionDetailsMapper;
 import com.mybank.accountservice.db.model.AccountDetail;
-import com.mybank.accountservice.db.model.AccountType;
-import com.mybank.accountservice.db.model.CustomerDetails;
-import com.mybank.accountservice.db.model.GenderType;
-import com.mybank.accountservice.db.model.TransactionStatus;
-import com.mybank.accountservice.db.model.TransactionType;
-import com.mybank.accountservice.db.model.TrasnsactionDetails;
-import com.mybank.accountservice.model.AccountDetailDTO;
+import com.mybank.accountservice.db.model.CustomerDetail;
+import com.mybank.accountservice.db.model.TrasnsactionDetail;
+import com.mybank.accountservice.dto.AccountDetailDto;
 import com.mybank.accountservice.service.TransactionService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class AccountController {
 		log.info("Pushing Message");
 		rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
 		rabbitTemplate.convertAndSend("myTestQueueExchange","myTestQueueKey", 
-				AccountDetailDTO.builder().description("Saving").accountNumber("123456789").balance(new BigDecimal(999999999.0)).opened(new Date()).openedByBranch("Bajaj Nagar").build());
+				AccountDetailDto.builder().description("Saving").accountNumber("123456789").balance(new BigDecimal(999999999.0)).opened(new Date()).openedByBranch("Bajaj Nagar").build());
 		
 		log.info("FEtching from DATA :{}",accountDetailsMapper.getAccountDetail("CITI123456"));
 		log.info("FEtching from LIST DATA :{}",accountDetailsMapper.getAccountDetailByCustomerId("1"));
@@ -60,7 +60,7 @@ public class AccountController {
 		
 		
 		log.info("INSERT  Customer Details" );
-		customerDetailsMapper.insert(CustomerDetails.builder().customerId("5").dob(new Date()).gender(GenderType.MALE).name("Dipti").emailId("dipt@gmail.com").build());
+		customerDetailsMapper.insert(CustomerDetail.builder().customerId("5").dob(new Date()).gender(GenderType.MALE).name("Dipti").emailId("dipt@gmail.com").build());
 		
 		log.info("INSERT  Account Details" );
 		accountDetailsMapper.insert(AccountDetail.builder().accountNumber("7777777").accountType(AccountType.INDIVIDUAL).balance(new BigDecimal(89899)).customerId("5")
@@ -68,7 +68,7 @@ public class AccountController {
 		
 		
 		log.info("INSERT  Transaction Details" );
-		transactionDetailsMapper.insert(TrasnsactionDetails.builder().accountNumber("7777777").transactionType(TransactionType.CREDIT)
+		transactionDetailsMapper.insert(TrasnsactionDetail.builder().accountNumber("7777777").transactionType(TransactionType.CREDIT)
 				.status(TransactionStatus.SUCCESS).description("Salary Credited").amount(new BigDecimal(89899)).customerId("5")
 				.description("Salary Credited").transactionId("5").trasactionDate(new Date()).build());
 		
@@ -77,7 +77,7 @@ public class AccountController {
 	  }
 	
 	@GetMapping("/transaction")
-	public TrasnsactionDetails perfromTransaction(@RequestHeader String customerId,@RequestHeader String accountNumber, @RequestHeader long amount,
+	public TrasnsactionDetail perfromTransaction(@RequestHeader String customerId,@RequestHeader String accountNumber, @RequestHeader long amount,
 			@RequestHeader String description,@RequestHeader TransactionType transactionType ){
 		log.info("Trasaction Started");
 	    return transactionService.performTransaction(customerId, accountNumber, amount, description, transactionType);

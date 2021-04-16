@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.mybank.accountservice.db.model.AccountDetail;
-import com.mybank.accountservice.db.model.CustomerDetails;
+import com.mybank.accountservice.db.model.CustomerDetail;
 
 
 @Mapper

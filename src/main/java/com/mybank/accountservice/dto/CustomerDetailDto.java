@@ -1,8 +1,9 @@
-package com.mybank.accountservice.db.model;
+package com.mybank.accountservice.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import com.mybank.accountservice.db.model.CustomerDetail;
+import com.mybank.accountservice.db.model.CustomerDetail.CustomerDetailBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,16 +17,9 @@ import lombok.ToString;
 @Data
 @ToString
 @Builder
-public class CustomerDetails {
-
-	@NonNull
+public class CustomerDetailDto {
 	private String customerId;
-	@NonNull
 	private String name;
-	@NonNull
 	private String emailId;
-	private Date dob;
-	private GenderType gender;
-	private List<AccountDetail> accounts;
-	private List<TrasnsactionDetails> transactions ;
+	private List<AccountDetailDto> accounts;
 }

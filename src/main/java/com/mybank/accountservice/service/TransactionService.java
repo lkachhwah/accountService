@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mybank.accountservice.db.enums.TransactionStatus;
+import com.mybank.accountservice.db.enums.TransactionType;
 import com.mybank.accountservice.db.mapper.AccountDetailsMapper;
 import com.mybank.accountservice.db.mapper.CustomerDetailsMapper;
 import com.mybank.accountservice.db.mapper.TransactionDetailsMapper;
 import com.mybank.accountservice.db.model.AccountDetail;
-import com.mybank.accountservice.db.model.TransactionStatus;
-import com.mybank.accountservice.db.model.TransactionType;
-import com.mybank.accountservice.db.model.TrasnsactionDetails;
+import com.mybank.accountservice.db.model.TrasnsactionDetail;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,10 +32,10 @@ public class TransactionService {
 	TransactionDetailsMapper transactionDetailsMapper;
 	
 	@Transactional
-	public TrasnsactionDetails performTransaction(String customerId,String accountNumber, long amount,String description,TransactionType transactionType)
+	public TrasnsactionDetail performTransaction(String customerId,String accountNumber, long amount,String description,TransactionType transactionType)
 	{
 		AccountDetail accountDetail = accountDetailsMapper.getAccountDetail(accountNumber);
-		TrasnsactionDetails trasnsactionDetails= TrasnsactionDetails.builder().transactionId(String.valueOf(new Date().getTime())).accountNumber(accountNumber).amount(new BigDecimal(amount)).customerId(customerId).description(description).transactionType(transactionType)
+		TrasnsactionDetail trasnsactionDetails= TrasnsactionDetail.builder().transactionId(String.valueOf(new Date().getTime())).accountNumber(accountNumber).amount(new BigDecimal(amount)).customerId(customerId).description(description).transactionType(transactionType)
 		.trasactionDate(new Date()).status(TransactionStatus.FAILED).build();
 		if(Objects.nonNull(accountDetail))
 		{
@@ -48,7 +48,7 @@ public class TransactionService {
 				if(accountDetail.getBalance().compareTo(new BigDecimal(amount)) >=1)
 				{
 				log.info("Go ahead with transaction");
-				accountDetail.setBalance(accountDetail.getBalance().add(new BigDecimal(amount)));
+				accountDetail.setBalance(accountDetail.getBalance().min(new BigDecimal(amount)));
 				trasnsactionDetails.setStatus(TransactionStatus.SUCCESS);
 				}else
 				{
