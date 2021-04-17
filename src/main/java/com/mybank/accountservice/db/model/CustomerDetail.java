@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.mybank.accountservice.db.enums.GenderType;
+import com.mybank.accountservice.enums.GenderType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

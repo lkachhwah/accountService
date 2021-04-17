@@ -16,7 +16,7 @@ import com.mybank.accountservice.db.model.CustomerDetail;
 public interface CustomerDetailsMapper {
 
 
-	@Select("select * from CustomerDetails  where customerId = #{customerId}")
+	/*@Select("select * from CustomerDetails  where customerId = #{customerId}")
 	@Results({
 		@Result(property = "customerId", column ="customerId"),
         @Result(property = "name", column = "name"),
@@ -27,8 +27,12 @@ public interface CustomerDetailsMapper {
 		many = @Many(select = "com.mybank.accountservice.db.mapper.TransactionDetailsMapper.getTrasnsactionDetailsByCustomerId"))
 		
 	})
+	CustomerDetail getCustomerDetails(@Param("customerId") String customerId);*/
+	
+	@Select("select * from CustomerDetails  where customerId = #{customerId}")
 	CustomerDetail getCustomerDetails(@Param("customerId") String customerId);
 	
-	@Insert("INSERT INTO CustomerDetails(customerId, name, emailId,gender,dob) VALUES (#{customerId}, #{name}, #{emailId},#{gender},#{dob})")
+	
+	@Insert("INSERT INTO CustomerDetails(customerId, name, emailId) VALUES (#{customerId}, #{name}, #{emailId})")
 	public void  insert(CustomerDetail  customerDetails);
 }

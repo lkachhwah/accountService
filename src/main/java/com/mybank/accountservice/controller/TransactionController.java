@@ -1,0 +1,37 @@
+package com.mybank.accountservice.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mybank.accountservice.dto.TrasnsactionDetailDto;
+import com.mybank.accountservice.service.TransactionService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@RequestMapping("/transaction")
+@Slf4j
+public class TransactionController {
+
+	@Autowired
+	TransactionService transactionService;
+	
+	@PostMapping
+	public TrasnsactionDetailDto performOperation(@RequestBody TrasnsactionDetailDto detailDto)
+	{
+		return transactionService.intiateOperation(detailDto);
+	}
+	
+	@GetMapping
+	public List<TrasnsactionDetailDto> getTransactionDetail(@RequestHeader String accountId)
+	{
+		return transactionService.getTrasactionDetails(accountId);
+	}
+}

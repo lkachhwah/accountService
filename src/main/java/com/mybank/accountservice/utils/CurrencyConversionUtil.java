@@ -1,6 +1,7 @@
 package com.mybank.accountservice.utils;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
-import com.mybank.accountservice.db.enums.CurrencyType;
 import com.mybank.accountservice.dto.BalanceDetailsDto;
+import com.mybank.accountservice.enums.CurrencyType;
 
 @Component
 public class CurrencyConversionUtil {
@@ -42,6 +43,9 @@ public class CurrencyConversionUtil {
 		case GBP:
 			value= getValue(balance,usdToGbpExchangeRate);
 			break;
+		case USD:
+			value= balance;
+			break;
 		default:
 				break;
 		}
@@ -50,7 +54,7 @@ public class CurrencyConversionUtil {
 	
 	public BigDecimal getValue(BigDecimal balance,double exchangeVale)
 	{
-		if(balance.doubleValue()==0 )
+		if(balance.compareTo(new BigDecimal(0))==0 )
 		{
 			return new BigDecimal(0.00);
 		}
@@ -73,6 +77,43 @@ public class CurrencyConversionUtil {
 		}).collect(Collectors.toList());
 		
 	}
+	
+	
+	public BigDecimal getUSDValueOfCurrency(BigDecimal balance,CurrencyType currencyType)
+	{
+		
+		BigDecimal value= new BigDecimal(0);
+				
+		switch(currencyType)
+		{ 
+		case EUR:
+			value= getUSDValue(balance,usdToEurExchangeRate);
+			break;
+		case SEK:
+			value= getUSDValue(balance,usdToSekExchangeRate);
+			break;
+		case GBP:
+			value= getUSDValue(balance,usdToGbpExchangeRate);
+			break;
+		case USD:
+			value= balance;
+			break;
+		default:
+				break;
+		}
+		return value;
+	}
+private BigDecimal getUSDValue(BigDecimal balance, double exchangeVale) {
+	
+	if(balance.compareTo(new BigDecimal(0))==0 )
+	{
+		return new BigDecimal(0.00);
+	}
+	else{
+		return balance.divide(new BigDecimal(exchangeVale),MathContext.DECIMAL128);
+	}
+	}
+
 	
 }
 	

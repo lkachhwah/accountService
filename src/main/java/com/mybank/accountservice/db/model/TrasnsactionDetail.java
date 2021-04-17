@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.mybank.accountservice.db.enums.CurrencyType;
-import com.mybank.accountservice.db.enums.TransactionStatus;
-import com.mybank.accountservice.db.enums.TransactionType;
+import com.mybank.accountservice.enums.CurrencyType;
+import com.mybank.accountservice.enums.TransactionStatus;
+import com.mybank.accountservice.enums.TransactionType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
