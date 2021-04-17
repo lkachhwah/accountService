@@ -1,7 +1,8 @@
-package com.mybank.accountservice.dto;
+package com.mybank.accountservice.request;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.mybank.accountservice.enums.CurrencyType;
 import com.mybank.accountservice.enums.TransactionStatus;
@@ -13,24 +14,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class TrasnsactionDetailDto {
-	
-	
-	private String transactionId;
-	private String  customerId;
+public class TransactionRequestDetails {
 	private String accountId;
-	private TransactionType transactionType;
+	private String transactionType;
 	private String description;
-	private Date trasactionDate;
 	private BigDecimal amount;
-	private TransactionStatus status;
-	private CurrencyType transactionCurrency;
-	private BigDecimal convertedBalance;
-	private String accountBalance;
-	private String accountBalanceInUSD;
+	private String transactionCurrency;
 }

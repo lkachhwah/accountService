@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
 import com.mybank.accountservice.exception.AccountServiceException;
+import com.mybank.accountservice.request.AccountRequestDetails;
+import com.mybank.accountservice.request.TransactionRequestDetails;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,9 +42,9 @@ public class CommonUtils {
 		return list.stream().map(CurrencyType::toString).collect(Collectors.joining(","));
 	}
 
-	public AccountDetail getAccountDetailsFromDto(AccountDetailDto accountDetailDto) {
-		AccountDetail accountDetail= objectMapper.convertValue(accountDetailDto, AccountDetail.class);
-		accountDetail.setAllowedCurrencies(getStringOfCurrecnyList(accountDetailDto.getCurrencies()));
+	public AccountDetail getAccountDetailsFromDto(AccountRequestDetails accountRequestDetails) {
+		AccountDetail accountDetail= objectMapper.convertValue(accountRequestDetails, AccountDetail.class);
+		accountDetail.setAllowedCurrencies(String.join(",", accountRequestDetails.getCurrencies()));
 		return accountDetail;
 	}
 
@@ -49,14 +52,10 @@ public class CommonUtils {
 		return objectMapper.convertValue(accountDetail, AccountDetailDto.class);
 	}
 	
-	public List<CurrencyType> getCurrecnyListFromString(String allowedCurrencies) {
-		 return Arrays.asList(allowedCurrencies.split(",")).stream().map(str->CurrencyType.valueOf(str)).collect(Collectors.toList());
+	public List<String> getCurrecnyListFromString(String allowedCurrencies) {
+		 return Arrays.asList(allowedCurrencies.split(",")).stream().map(str->str).collect(Collectors.toList());
 	}
 
-	public TrasnsactionDetail getAccountDetailsFromDto(TrasnsactionDetailDto detailDto) {
-		return objectMapper.convertValue(detailDto, TrasnsactionDetail.class);
-		
-	}
 
 	public BalanceDetailsDto checkCurrencySupportedByAccount(CurrencyType transactionCurrency,
 			List<BalanceDetailsDto> balanceInDifferentCurrency) {
@@ -67,11 +66,12 @@ public class CommonUtils {
 			return null;
 	}
 	
-	public void checkSufficientBalanceToPerformOperation(TrasnsactionDetailDto detailDto ,
+	public void checkSufficientBalanceToPerformOperation(TransactionRequestDetails transactionRequestDetails ,
 			BalanceDetailsDto balanceDetailsDto) {
 		
-		log.info("Balance :{} , transaction :{} ,comparison:{}",balanceDetailsDto.getAmount(),detailDto.getAmount(),balanceDetailsDto.getAmount().compareTo(detailDto.getAmount())>=1);
-		if(balanceDetailsDto.getAmount().compareTo(detailDto.getAmount())>=1)
+		log.info("Balance :{} , transaction :{} ,comparison:{}",balanceDetailsDto.getAmount(),transactionRequestDetails.getAmount(),
+				balanceDetailsDto.getAmount().compareTo(transactionRequestDetails.getAmount())>=1);
+		if(balanceDetailsDto.getAmount().compareTo(transactionRequestDetails.getAmount())>=1)
 		{
 			return;
 		}

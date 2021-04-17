@@ -32,4 +32,5 @@ public class TrasnsactionDetail {
 	private TransactionStatus status;
 	private CurrencyType transactionCurrency;
 	private BigDecimal accountBalance;
+	private BigDecimal accountBalanceInUSD;
 }

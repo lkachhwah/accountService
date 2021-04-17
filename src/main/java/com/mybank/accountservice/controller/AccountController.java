@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mybank.accountservice.dto.AccountDetailDto;
+import com.mybank.accountservice.request.AccountRequestDetails;
 import com.mybank.accountservice.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,9 +24,9 @@ public class AccountController {
 	AccountService accountService;
 	
 	@PostMapping
-	public AccountDetailDto createAccount(@RequestBody AccountDetailDto accountDetailDto)
+	public AccountDetailDto createAccount(@RequestBody AccountRequestDetails accountRequestDetails)
 	{
-		AccountDetailDto response=accountService.createAccount(accountDetailDto);
+		AccountDetailDto response=accountService.createAccount(accountRequestDetails);
 		response.setBalance(null);
 		return response;
 	}

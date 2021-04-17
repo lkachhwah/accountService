@@ -65,17 +65,15 @@ public class CurrencyConversionUtil {
 	}
 	
 	
-	public List<BalanceDetailsDto> getBalanceDetails(List<CurrencyType> currenciessupportedList,BigDecimal balance)
+	public List<BalanceDetailsDto> getBalanceDetails(List<String> currenciessupportedList,BigDecimal balance)
 	{
 		if(CollectionUtils.isEmpty(currenciessupportedList))
 		{
 			return new ArrayList<>();
 		}
-		
-		return currenciessupportedList.stream().map(currency->{
-			return BalanceDetailsDto.builder().currency(currency).amount(getValueByCurrency(balance,currency)).build();
-		}).collect(Collectors.toList());
-		
+		return currenciessupportedList.stream()
+				.map(currencyType-> BalanceDetailsDto.builder().currency(CurrencyType.valueOf(currencyType)).amount(getValueByCurrency(balance,CurrencyType.valueOf(currencyType))).build()
+	).collect(Collectors.toList());
 	}
 	
 	

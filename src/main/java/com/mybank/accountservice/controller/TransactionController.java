@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
+import com.mybank.accountservice.request.TransactionRequestDetails;
 import com.mybank.accountservice.service.TransactionService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +25,9 @@ public class TransactionController {
 	TransactionService transactionService;
 	
 	@PostMapping
-	public TrasnsactionDetailDto performOperation(@RequestBody TrasnsactionDetailDto detailDto)
+	public TrasnsactionDetailDto performOperation(@RequestBody TransactionRequestDetails transactionRequestDetails)
 	{
-		return transactionService.intiateOperation(detailDto);
+		return transactionService.intiateOperation(transactionRequestDetails);
 	}
 	
 	@GetMapping

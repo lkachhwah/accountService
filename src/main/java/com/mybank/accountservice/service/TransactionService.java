@@ -17,8 +17,10 @@ import com.mybank.accountservice.dto.AccountDetailDto;
 import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
+import com.mybank.accountservice.enums.TransactionStatus;
 import com.mybank.accountservice.enums.TransactionType;
 import com.mybank.accountservice.exception.AccountServiceException;
+import com.mybank.accountservice.request.TransactionRequestDetails;
 import com.mybank.accountservice.utils.CommonUtils;
 import com.mybank.accountservice.utils.CurrencyConversionUtil;
 import com.mybank.accountservice.utils.ValidationUtils;
@@ -45,28 +47,29 @@ public class TransactionService {
 	@Autowired
 	CurrencyConversionUtil currencyConversionUtil;
 	
-	public TrasnsactionDetailDto intiateOperation(TrasnsactionDetailDto detailDto)
+	public TrasnsactionDetailDto intiateOperation(TransactionRequestDetails transactionRequestDetails)
 	{
-		validationUtils.validatePerformTransactionDetails(detailDto);
-		AccountDetailDto accountDetailDto = accountService.getAccountDetails(detailDto.getAccountId());		
-		detailDto.setCustomerId(accountDetailDto.getCustomerId());
+		validationUtils.validatePerformTransactionDetails(transactionRequestDetails);
+		AccountDetailDto accountDetailDto = accountService.getAccountDetails(transactionRequestDetails.getAccountId());		
 		
 		log.info("Transaction Account details:{}",accountDetailDto);
-		preOperationCheck(detailDto,accountDetailDto);
+		preOperationCheck(transactionRequestDetails,accountDetailDto);
 		
-		TrasnsactionDetail trasnsactionDetail = performOperation(detailDto,accountDetailDto.getBalance());
+		TrasnsactionDetail trasnsactionDetail = performOperation(transactionRequestDetails,accountDetailDto);
 		
 		return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
 
 	}
 
-	private TrasnsactionDetail performOperation(TrasnsactionDetailDto detailDto, BigDecimal balance) {
+private TrasnsactionDetail performOperation(TransactionRequestDetails transactionRequestDetails, AccountDetailDto accountDetailDto) {
 		
-		BigDecimal trasactionAmountInUSD= currencyConversionUtil.getUSDValueOfCurrency(detailDto.getAmount(),detailDto.getTransactionCurrency());
-		switch(detailDto.getTransactionType())
+		BigDecimal balance= accountDetailDto.getBalance();
+		
+		BigDecimal trasactionAmountInUSD= currencyConversionUtil.getUSDValueOfCurrency(transactionRequestDetails.getAmount(),CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency()));
+		switch(TransactionType.valueOf(transactionRequestDetails.getTransactionType()))
 		{
 		case IN:
-			balance =balance.add(currencyConversionUtil.getUSDValueOfCurrency(detailDto.getAmount(),detailDto.getTransactionCurrency()));
+			balance =balance.add(trasactionAmountInUSD);
 			break;
 		case OUT:
 			log.info("Trasaction amount after Convertion:{}" ,trasactionAmountInUSD);
@@ -75,75 +78,40 @@ public class TransactionService {
 		default:
 			break;
 		}
-		TrasnsactionDetail trasnsactionDetail=commonUtils.getAccountDetailsFromDto(detailDto);
+		TrasnsactionDetail trasnsactionDetail=new TrasnsactionDetail();
+		trasnsactionDetail.setTransactionCurrency(CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency()));
+		trasnsactionDetail.setTransactionType(TransactionType.valueOf(transactionRequestDetails.getTransactionType()));
+		trasnsactionDetail.setAccountId(transactionRequestDetails.getAccountId());
+		trasnsactionDetail.setDescription(transactionRequestDetails.getDescription());
+		trasnsactionDetail.setAmount(transactionRequestDetails.getAmount());
 		trasnsactionDetail.setTrasactionDate(new Date());
 		trasnsactionDetail.setTransactionId(commonUtils.getUniqueNumber());
 		trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(balance, trasnsactionDetail.getTransactionCurrency()));
-		accountService.updateBalance(detailDto.getAccountId(), balance);
+		trasnsactionDetail.setCustomerId(accountDetailDto.getCustomerId());
+		trasnsactionDetail.setStatus(TransactionStatus.SUCCESS);
+		trasnsactionDetail.setAccountBalanceInUSD(balance);
+		accountService.updateBalance(transactionRequestDetails.getAccountId(), balance);
 		transactionDetailsMapper.insert(trasnsactionDetail);
 		return trasnsactionDetail;
 		
 	}
 
-	private void preOperationCheck(TrasnsactionDetailDto detailDto,AccountDetailDto accountDetailDto) {
-		BalanceDetailsDto balanceDetailsDto=commonUtils.checkCurrencySupportedByAccount(detailDto.getTransactionCurrency(),accountDetailDto.getBalanceInDifferentCurrency());
-		if(TransactionType.OUT== detailDto.getTransactionType())
+	private void preOperationCheck(TransactionRequestDetails transactionRequestDetails,AccountDetailDto accountDetailDto) {
+		BalanceDetailsDto balanceDetailsDto=commonUtils.checkCurrencySupportedByAccount(CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency())
+				,accountDetailDto.getBalanceInDifferentCurrency());
+		if(TransactionType.OUT== TransactionType.valueOf(transactionRequestDetails.getTransactionType()))
 		{
-			commonUtils.checkSufficientBalanceToPerformOperation(detailDto,balanceDetailsDto);
+			commonUtils.checkSufficientBalanceToPerformOperation(transactionRequestDetails,balanceDetailsDto);
 		}
-		
-		 
 	}
 	
 	public List<TrasnsactionDetailDto> getTrasactionDetails(String accountId)
 	{
-		List<TrasnsactionDetail> trasnsactionDetailsList=transactionDetailsMapper.getTrasnsactionDetailsByCustomerId(accountId);
+		List<TrasnsactionDetail> trasnsactionDetailsList=transactionDetailsMapper.getTrasnsactionDetailsByAccountId(accountId);
 		if(CollectionUtils.isEmpty(trasnsactionDetailsList))
 		{
-
 			throw new AccountServiceException("Invalid Account details",HttpStatus.BAD_REQUEST);
-			
 		}
 		return commonUtils.convertListToTransactionDetailDto(trasnsactionDetailsList);
-		
-		
 	}
-	
-	
-/*	@Transactional
-	public TrasnsactionDetail performTransaction(String customerId,String accountNumber, long amount,String description,TransactionType transactionType)
-	{
-		AccountDetail accountDetail = accountDetailsMapper.getAccountDetail(accountNumber);
-		TrasnsactionDetail trasnsactionDetails= TrasnsactionDetail.builder().transactionId(String.valueOf(new Date().getTime())).accountNumber(accountNumber).amount(new BigDecimal(amount)).customerId(customerId).description(description).transactionType(transactionType)
-		.trasactionDate(new Date()).status(TransactionStatus.FAILED).build();
-		if(Objects.nonNull(accountDetail))
-		{
-			switch (transactionType) {
-			case CREDIT:
-				accountDetail.setBalance(accountDetail.getBalance().add(new BigDecimal(amount)));
-				trasnsactionDetails.setStatus(TransactionStatus.SUCCESS);
-				break;
-			case DEBIT:
-				if(accountDetail.getBalance().compareTo(new BigDecimal(amount)) >=1)
-				{
-				log.info("Go ahead with transaction");
-				accountDetail.setBalance(accountDetail.getBalance().min(new BigDecimal(amount)));
-				trasnsactionDetails.setStatus(TransactionStatus.SUCCESS);
-				}else
-				{
-					log.info("Transaction cannot be procedd as balanc is low");
-				}
-				break;
-
-			default:
-				break;
-			}
-			accountDetailsMapper.updateAmount(accountDetail);
-			transactionDetailsMapper.insert(trasnsactionDetails);
-		}
-		return trasnsactionDetails;
-	}
-	*/
-	
-
 }
