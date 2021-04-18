@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS `TRANSACTIONDETAILS`
     `status` VARCHAR(10),
     `transactionCurrency` VARCHAR(10),
     `accountBalance` DECIMAL(15,2) NOT NULL,
-    `accountBalanceInUSD` DECIMAL(15,2) NOT NULL
+    `accountBalanceInUSD` DECIMAL(15,2) NOT NULL,
+     `failureReason` VARCHAR(100)
+    
 );
 

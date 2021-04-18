@@ -51,17 +51,46 @@ public class TransactionService {
 	{
 		validationUtils.validatePerformTransactionDetails(transactionRequestDetails);
 		AccountDetailDto accountDetailDto = accountService.getAccountDetails(transactionRequestDetails.getAccountId());		
+		BigDecimal updatedBalance = accountDetailDto.getBalance();
+		TransactionStatus status=null;
 		
-		log.info("Transaction Account details:{}",accountDetailDto);
-		preOperationCheck(transactionRequestDetails,accountDetailDto);
-		
-		TrasnsactionDetail trasnsactionDetail = performOperation(transactionRequestDetails,accountDetailDto);
-		
+		TrasnsactionDetail trasnsactionDetail=new TrasnsactionDetail();
+		trasnsactionDetail.setTransactionCurrency(CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency()));
+		trasnsactionDetail.setTransactionType(TransactionType.valueOf(transactionRequestDetails.getTransactionType()));
+		trasnsactionDetail.setAccountId(transactionRequestDetails.getAccountId());
+		trasnsactionDetail.setDescription(transactionRequestDetails.getDescription());
+		trasnsactionDetail.setAmount(transactionRequestDetails.getAmount());
+		trasnsactionDetail.setTrasactionDate(new Date());
+		trasnsactionDetail.setTransactionId(commonUtils.getUniqueNumber());
+		trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance, trasnsactionDetail.getTransactionCurrency()));
+		trasnsactionDetail.setCustomerId(accountDetailDto.getCustomerId());
+		trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
+		trasnsactionDetail.setFailureReason("NA");
+		try{
+			log.info("Transaction Account details:{}",accountDetailDto);
+			preOperationCheck(transactionRequestDetails,accountDetailDto);
+			updatedBalance= updatedBalance(transactionRequestDetails,accountDetailDto);
+			status=TransactionStatus.SUCCESS;
+			trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance, trasnsactionDetail.getTransactionCurrency()));
+			trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
+		}catch(AccountServiceException e)
+		{
+			status=TransactionStatus.FAILED;
+			trasnsactionDetail.setFailureReason(e.getMessage());
+			throw e;
+		}
+		finally
+		{
+			if(status==TransactionStatus.SUCCESS){
+				accountService.updateBalance(transactionRequestDetails.getAccountId(), updatedBalance);
+			}
+			trasnsactionDetail.setStatus(status);
+			transactionDetailsMapper.insert(trasnsactionDetail);
+		}
 		return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
-
 	}
 
-private TrasnsactionDetail performOperation(TransactionRequestDetails transactionRequestDetails, AccountDetailDto accountDetailDto) {
+private BigDecimal updatedBalance(TransactionRequestDetails transactionRequestDetails, AccountDetailDto accountDetailDto) {
 		
 		BigDecimal balance= accountDetailDto.getBalance();
 		
@@ -78,22 +107,8 @@ private TrasnsactionDetail performOperation(TransactionRequestDetails transactio
 		default:
 			break;
 		}
-		TrasnsactionDetail trasnsactionDetail=new TrasnsactionDetail();
-		trasnsactionDetail.setTransactionCurrency(CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency()));
-		trasnsactionDetail.setTransactionType(TransactionType.valueOf(transactionRequestDetails.getTransactionType()));
-		trasnsactionDetail.setAccountId(transactionRequestDetails.getAccountId());
-		trasnsactionDetail.setDescription(transactionRequestDetails.getDescription());
-		trasnsactionDetail.setAmount(transactionRequestDetails.getAmount());
-		trasnsactionDetail.setTrasactionDate(new Date());
-		trasnsactionDetail.setTransactionId(commonUtils.getUniqueNumber());
-		trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(balance, trasnsactionDetail.getTransactionCurrency()));
-		trasnsactionDetail.setCustomerId(accountDetailDto.getCustomerId());
-		trasnsactionDetail.setStatus(TransactionStatus.SUCCESS);
-		trasnsactionDetail.setAccountBalanceInUSD(balance);
-		accountService.updateBalance(transactionRequestDetails.getAccountId(), balance);
-		transactionDetailsMapper.insert(trasnsactionDetail);
-		return trasnsactionDetail;
 		
+		return balance;
 	}
 
 	private void preOperationCheck(TransactionRequestDetails transactionRequestDetails,AccountDetailDto accountDetailDto) {

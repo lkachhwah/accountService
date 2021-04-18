@@ -15,8 +15,8 @@ public interface TransactionDetailsMapper {
 	@Select("SELECT * FROM TRANSACTIONDETAILS WHERE accountId = #{accountId}")
 	List<TrasnsactionDetail> getTrasnsactionDetailsByAccountId(@Param("accountId") String accountId);
 	
-	 @Insert("INSERT INTO TRANSACTIONDETAILS(transactionId, customerId, accountId,transactionType,description,trasactionDate,amount,status,transactionCurrency,accountBalance,accountBalanceInUSD) VALUES "
-	    		+ "(#{transactionId}, #{customerId},#{accountId},#{transactionType},#{description},#{trasactionDate},#{amount},#{status},#{transactionCurrency},#{accountBalance},#{accountBalanceInUSD})")
+	 @Insert("INSERT INTO TRANSACTIONDETAILS(transactionId, customerId, accountId,transactionType,description,trasactionDate,amount,status,transactionCurrency,accountBalance,accountBalanceInUSD,failureReason) VALUES "
+	    		+ "(#{transactionId}, #{customerId},#{accountId},#{transactionType},#{description},#{trasactionDate},#{amount},#{status},#{transactionCurrency},#{accountBalance},#{accountBalanceInUSD},#{failureReason})")
 		public void  insert(TrasnsactionDetail  trasnsactionDetails);
 
 }

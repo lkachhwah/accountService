@@ -33,4 +33,5 @@ public class TrasnsactionDetail {
 	private CurrencyType transactionCurrency;
 	private BigDecimal accountBalance;
 	private BigDecimal accountBalanceInUSD;
+	private String failureReason;
 }
