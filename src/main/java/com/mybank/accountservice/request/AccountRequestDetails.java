@@ -8,6 +8,7 @@ import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.enums.CurrencyType;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AccountRequestDetails {
 	
 	private String country;

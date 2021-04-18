@@ -15,7 +15,6 @@ import com.mybank.accountservice.db.model.CustomerDetail;
 @Mapper
 public interface CustomerDetailsMapper {
 
-
 	/*@Select("select * from CustomerDetails  where customerId = #{customerId}")
 	@Results({
 		@Result(property = "customerId", column ="customerId"),
