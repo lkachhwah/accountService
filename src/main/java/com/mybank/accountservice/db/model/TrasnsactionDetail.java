@@ -1,5 +1,6 @@
 package com.mybank.accountservice.db.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,16 @@ import lombok.ToString;
 @Data
 @ToString
 @Builder
-public class TrasnsactionDetail {
+
+public class TrasnsactionDetail implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6939358267671033448L;
+	/**
+	 * 
+	 */
 	
 	private String transactionId;
 	private String  customerId;

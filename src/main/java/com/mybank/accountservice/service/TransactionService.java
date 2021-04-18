@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.eventbus.AllowConcurrentEvents;
 import com.mybank.accountservice.db.mapper.TransactionDetailsMapper;
 import com.mybank.accountservice.db.model.TrasnsactionDetail;
 import com.mybank.accountservice.dto.AccountDetailDto;
 import com.mybank.accountservice.dto.BalanceDetailsDto;
+import com.mybank.accountservice.dto.PublisherDto;
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
 import com.mybank.accountservice.enums.TransactionStatus;
@@ -46,6 +46,9 @@ public class TransactionService {
 	
 	@Autowired
 	CurrencyConversionUtil currencyConversionUtil;
+	
+	@Autowired
+	EventPublisherService eventPublisherService;
 	
 	public TrasnsactionDetailDto intiateOperation(TransactionRequestDetails transactionRequestDetails)
 	{
@@ -86,6 +89,9 @@ public class TransactionService {
 			}
 			trasnsactionDetail.setStatus(status);
 			transactionDetailsMapper.insert(trasnsactionDetail);
+			PublisherDto<TrasnsactionDetail> data=new PublisherDto<TrasnsactionDetail>() ;
+			data.add(trasnsactionDetail);
+			eventPublisherService.asyncMethodWithVoidReturnType(data);
 		}
 		return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
 	}
