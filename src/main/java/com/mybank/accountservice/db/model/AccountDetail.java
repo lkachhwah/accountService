@@ -1,13 +1,9 @@
 package com.mybank.accountservice.db.model;
 
-
-
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.mybank.accountservice.enums.CurrencyType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,5 +26,7 @@ public class AccountDetail {
 	private String country;
 	private Date openedOnDate;
 	private BigDecimal balance; // main balance always be store in USD
-	private String  allowedCurrencies;
+	private String allowedCurrencies;
+	@NonNull
+	private String stampKey;
 }

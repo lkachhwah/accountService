@@ -4,11 +4,14 @@ package com.mybank.accountservice.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.mybank.accountservice.db.mapper.TransactionDetailsMapper;
 import com.mybank.accountservice.db.model.TrasnsactionDetail;
@@ -51,13 +54,61 @@ public class TransactionService {
 	@Autowired
 	EventPublisherService eventPublisherService;
 	
-	public TrasnsactionDetailDto intiateOperation(TransactionRequestDetails transactionRequestDetails)
+	int retryCount=5;
+	
+	public TrasnsactionDetailDto intiateOperation(TransactionRequestDetails transactionRequestDetails,int count,String tranactionId)
 	{
+		tranactionId=StringUtils.isEmpty(tranactionId)?commonUtils.getUniqueNumber():tranactionId;
 		validationUtils.validatePerformTransactionDetails(transactionRequestDetails);
+		log.info("[intiateOperation] -START acountId:{} ,tranactionId:{}",transactionRequestDetails.getAccountId(),tranactionId);
 		AccountDetailDto accountDetailDto = accountService.getAccountDetails(transactionRequestDetails.getAccountId());		
 		BigDecimal updatedBalance = accountDetailDto.getBalance();
-		TransactionStatus status=null;
 		
+		TrasnsactionDetail trasnsactionDetail = getTransactionDetail(transactionRequestDetails, accountDetailDto,updatedBalance);
+		trasnsactionDetail.setTransactionId(tranactionId);
+		
+		try{
+			log.info("Transaction Account details:{},,tranactionId:{}",accountDetailDto,tranactionId);
+			preOperationCheck(transactionRequestDetails,accountDetailDto);
+			updatedBalance= updatedBalance(transactionRequestDetails,accountDetailDto);
+			trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance, trasnsactionDetail.getTransactionCurrency()));
+			trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
+			trasnsactionDetail.setStatus(TransactionStatus.SUCCESS);
+			accountService.updateBalanceBasedStampKey(accountDetailDto, updatedBalance);
+			log.info("[intiateOperation] -ACOUNT UPDATED acountId:{},,tranactionId:{}",transactionRequestDetails.getAccountId(),tranactionId);
+			
+		}catch(AccountServiceException e)
+		{
+			log.error("[intiateOperation] -EXCEPTION acountId:{} , ErrorCode:{} ,ErrorMessage:{} ,tranactionId:{}",transactionRequestDetails.getAccountId(),e.getCode(),e.getMessage(),tranactionId);
+			checkAndRetry(transactionRequestDetails, count, trasnsactionDetail, e);
+			trasnsactionDetail.setFailureReason(e.getMessage());
+			trasnsactionDetail.setStatus(TransactionStatus.FAILED);
+			trasnsactionDetail.setAccountBalanceInUSD(accountDetailDto.getBalance());
+			trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(accountDetailDto.getBalance(), trasnsactionDetail.getTransactionCurrency()));
+			throw e;
+		}
+		finally
+		{
+			transactionDetailsMapper.insert(trasnsactionDetail);
+			PublisherDto<TrasnsactionDetail> data=new PublisherDto<TrasnsactionDetail>() ;
+			data.add(trasnsactionDetail);
+			eventPublisherService.asyncMethodWithVoidReturnType(data);
+		}
+		log.info("[intiateOperation] -END acountId:{} ,TransactionId:{}",trasnsactionDetail.getAccountId(),tranactionId);
+			return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
+	}
+
+	private void checkAndRetry(TransactionRequestDetails transactionRequestDetails, int count,
+			TrasnsactionDetail trasnsactionDetail, AccountServiceException e) {
+		if(Objects.nonNull(e.getCode())&& FailureCode.CD16==e.getCode() && count<=retryCount)
+		{
+			log.info("[intiateOperation] -Retry For  acountId:{} , TransactionId:{}",trasnsactionDetail.getAccountId(),trasnsactionDetail.getTransactionId());
+			intiateOperation(transactionRequestDetails,count++,trasnsactionDetail.getTransactionId());
+		}
+	}
+
+	private TrasnsactionDetail getTransactionDetail(TransactionRequestDetails transactionRequestDetails,
+			AccountDetailDto accountDetailDto, BigDecimal updatedBalance) {
 		TrasnsactionDetail trasnsactionDetail=new TrasnsactionDetail();
 		trasnsactionDetail.setTransactionCurrency(CurrencyType.valueOf(transactionRequestDetails.getTransactionCurrency()));
 		trasnsactionDetail.setTransactionType(TransactionType.valueOf(transactionRequestDetails.getTransactionType()));
@@ -65,36 +116,11 @@ public class TransactionService {
 		trasnsactionDetail.setDescription(transactionRequestDetails.getDescription());
 		trasnsactionDetail.setAmount(transactionRequestDetails.getAmount());
 		trasnsactionDetail.setTrasactionDate(new Date());
-		trasnsactionDetail.setTransactionId(commonUtils.getUniqueNumber());
 		trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance, trasnsactionDetail.getTransactionCurrency()));
 		trasnsactionDetail.setCustomerId(accountDetailDto.getCustomerId());
 		trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
 		trasnsactionDetail.setFailureReason("NA");
-		try{
-			log.info("Transaction Account details:{}",accountDetailDto);
-			preOperationCheck(transactionRequestDetails,accountDetailDto);
-			updatedBalance= updatedBalance(transactionRequestDetails,accountDetailDto);
-			status=TransactionStatus.SUCCESS;
-			trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance, trasnsactionDetail.getTransactionCurrency()));
-			trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
-		}catch(AccountServiceException e)
-		{
-			status=TransactionStatus.FAILED;
-			trasnsactionDetail.setFailureReason(e.getMessage());
-			throw e;
-		}
-		finally
-		{
-			if(status==TransactionStatus.SUCCESS){
-				accountService.updateBalance(transactionRequestDetails.getAccountId(), updatedBalance);
-			}
-			trasnsactionDetail.setStatus(status);
-			transactionDetailsMapper.insert(trasnsactionDetail);
-			PublisherDto<TrasnsactionDetail> data=new PublisherDto<TrasnsactionDetail>() ;
-			data.add(trasnsactionDetail);
-			eventPublisherService.asyncMethodWithVoidReturnType(data);
-		}
-		return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
+		return trasnsactionDetail;
 	}
 
 private BigDecimal updatedBalance(TransactionRequestDetails transactionRequestDetails, AccountDetailDto accountDetailDto) {
@@ -129,11 +155,15 @@ private BigDecimal updatedBalance(TransactionRequestDetails transactionRequestDe
 	
 	public List<TrasnsactionDetailDto> getTrasactionDetails(String accountId)
 	{
-		List<TrasnsactionDetail> trasnsactionDetailsList=transactionDetailsMapper.getTrasnsactionDetailsByAccountId(accountId);
-		if(CollectionUtils.isEmpty(trasnsactionDetailsList))
+		log.info("[getTrasactionDetails] -START acountId:{}",accountId);
+		Optional<List<TrasnsactionDetail>> trasnsactionDetailsList=transactionDetailsMapper.getTrasnsactionDetailsByAccountId(accountId);
+		if(trasnsactionDetailsList.isPresent() && !CollectionUtils.isEmpty(trasnsactionDetailsList.get()))
 		{
-			throw new AccountServiceException(FailureCode.CD12,HttpStatus.BAD_REQUEST);
+			log.info("[getTrasactionDetails] -Found acountId:{}",accountId);
+			return commonUtils.convertListToTransactionDetailDto(trasnsactionDetailsList.get());
+			
 		}
-		return commonUtils.convertListToTransactionDetailDto(trasnsactionDetailsList);
+		log.error("[getTrasactionDetails] -NOT FOUND acountId:{}",accountId);
+		throw new AccountServiceException(FailureCode.CD12,HttpStatus.BAD_REQUEST);
 	}
 }

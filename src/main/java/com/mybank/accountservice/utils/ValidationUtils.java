@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
 import com.mybank.accountservice.enums.FailureCode;
 import com.mybank.accountservice.enums.TransactionType;
@@ -20,8 +19,6 @@ import com.mybank.accountservice.request.TransactionRequestDetails;
 
 @Component
 public class ValidationUtils {
-	
-	 
 
 	public void validateCreateAccountDetails(AccountRequestDetails accountRequestDetails) {
 		if (Objects.nonNull(accountRequestDetails)) {
@@ -47,11 +44,11 @@ public class ValidationUtils {
 			}
 		}
 	}
-	
 
 	public void validatePerformTransactionDetails(TransactionRequestDetails transactionRequestDetails) {
 		if (Objects.nonNull(transactionRequestDetails)) {
-			if (Objects.nonNull(transactionRequestDetails.getAmount()) && transactionRequestDetails.getAmount().compareTo(new BigDecimal(0))<=0) {
+			if (Objects.nonNull(transactionRequestDetails.getAmount())
+					&& transactionRequestDetails.getAmount().compareTo(new BigDecimal(0)) <= 0) {
 				throw new AccountServiceException(FailureCode.CD8, HttpStatus.BAD_REQUEST);
 			}
 			if (StringUtils.isEmpty(transactionRequestDetails.getAccountId())) {
@@ -64,22 +61,20 @@ public class ValidationUtils {
 					.collect(Collectors.toSet()).contains(transactionRequestDetails.getTransactionCurrency())) {
 				throw new AccountServiceException(FailureCode.CD4, HttpStatus.BAD_REQUEST);
 			}
-			
-			
+
 			if (StringUtils.isEmpty(transactionRequestDetails.getTransactionType())) {
 				throw new AccountServiceException(FailureCode.CD9, HttpStatus.BAD_REQUEST);
 			}
-			
+
 			if (!Arrays.asList(TransactionType.values()).stream().map(currency -> currency.toString())
 					.collect(Collectors.toSet()).contains(transactionRequestDetails.getTransactionType())) {
 				throw new AccountServiceException(FailureCode.CD10, HttpStatus.BAD_REQUEST);
 			}
-			
+
 			if (StringUtils.isEmpty(transactionRequestDetails.getDescription())) {
 				throw new AccountServiceException(FailureCode.CD11, HttpStatus.BAD_REQUEST);
 			}
-			
-			
+
 		}
 
 	}

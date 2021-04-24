@@ -14,25 +14,20 @@ import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.request.TransactionRequestDetails;
 import com.mybank.accountservice.service.TransactionService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RestController
 @RequestMapping("/transaction")
-@Slf4j
 public class TransactionController {
 
 	@Autowired
 	TransactionService transactionService;
-	
+
 	@PostMapping
-	public TrasnsactionDetailDto performOperation(@RequestBody TransactionRequestDetails transactionRequestDetails)
-	{
-		return transactionService.intiateOperation(transactionRequestDetails);
+	public TrasnsactionDetailDto performOperation(@RequestBody TransactionRequestDetails transactionRequestDetails) {
+		return transactionService.intiateOperation(transactionRequestDetails, 1,null);
 	}
-	
+
 	@GetMapping
-	public List<TrasnsactionDetailDto> getTransactionDetail(@RequestHeader String accountId)
-	{
+	public List<TrasnsactionDetailDto> getTransactionDetail(@RequestHeader String accountId) {
 		return transactionService.getTrasactionDetails(accountId);
 	}
 }

@@ -1,7 +1,5 @@
 package com.mybank.accountservice.service;
 
-import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +12,7 @@ public class CustomerService {
 	CustomerDetailsMapper customerDetailsMapper;
 
 	public boolean checkCustomerExist(String customerId) {
-		if (Objects.nonNull(customerDetailsMapper.getCustomerDetails(customerId)))
+		if (customerDetailsMapper.getCustomerDetails(customerId).isPresent())
 			return true;
 		else
 			return false;

@@ -11,14 +11,15 @@ public enum FailureCode {
 	 CD5("Intial Balance is missing  in request"),
 	 CD6("Intial Balance is negative  in request"),
 	 CD7("AccountId is missing in request"),
-	 CD8("Currency is Invalid"),
+	 CD8("Amount is Invalid"),
 	 CD9("TransactionType is missing in request"),
 	 CD10("TransactionType is Invalid"),
 	 CD11("Description is missing in request"),
 	 CD12("AccountId is invalid"),
 	 CD13("Insufficient Balance"),
 	 CD14("CustomerId is does not exist"),
-	 CD15("Internal porcessing Error");
+	 CD15("Internal porcessing Error"),
+	 CD16("Multiple transaction found please try after sometime");
 	 
 	 
 	 

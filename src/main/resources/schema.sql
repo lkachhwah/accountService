@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `ACCOUNTDETAILS`
     `country` VARCHAR(100) NOT NULL,
     `openedOnDate` DATE NOT NULL,
     `balance` DECIMAL(15,2) NOT NULL,
-    `allowedCurrencies` VARCHAR(100) NOT NULL
+    `allowedCurrencies` VARCHAR(100) NOT NULL,
+    `stampKey` VARCHAR(100) NOT NULL UNIQUE
 );
 
 
