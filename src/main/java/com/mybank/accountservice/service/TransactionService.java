@@ -17,6 +17,7 @@ import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.dto.PublisherDto;
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
+import com.mybank.accountservice.enums.FailureCode;
 import com.mybank.accountservice.enums.TransactionStatus;
 import com.mybank.accountservice.enums.TransactionType;
 import com.mybank.accountservice.exception.AccountServiceException;
@@ -131,7 +132,7 @@ private BigDecimal updatedBalance(TransactionRequestDetails transactionRequestDe
 		List<TrasnsactionDetail> trasnsactionDetailsList=transactionDetailsMapper.getTrasnsactionDetailsByAccountId(accountId);
 		if(CollectionUtils.isEmpty(trasnsactionDetailsList))
 		{
-			throw new AccountServiceException("Invalid Account details",HttpStatus.BAD_REQUEST);
+			throw new AccountServiceException(FailureCode.CD12,HttpStatus.BAD_REQUEST);
 		}
 		return commonUtils.convertListToTransactionDetailDto(trasnsactionDetailsList);
 	}

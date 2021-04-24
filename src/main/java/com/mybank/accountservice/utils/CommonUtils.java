@@ -20,6 +20,7 @@ import com.mybank.accountservice.dto.AccountDetailDto;
 import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.enums.CurrencyType;
+import com.mybank.accountservice.enums.FailureCode;
 import com.mybank.accountservice.exception.AccountServiceException;
 import com.mybank.accountservice.request.AccountRequestDetails;
 import com.mybank.accountservice.request.TransactionRequestDetails;
@@ -75,7 +76,7 @@ public class CommonUtils {
 		{
 			return;
 		}
-		throw new AccountServiceException("Insufficient Balance",HttpStatus.BAD_REQUEST);
+		throw new AccountServiceException(FailureCode.CD13,HttpStatus.BAD_REQUEST);
 	}
 
 	public TrasnsactionDetailDto getDTOFromTransactionDetail(TrasnsactionDetail trasnsactionDetail) {

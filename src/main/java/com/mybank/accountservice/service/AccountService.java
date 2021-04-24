@@ -14,6 +14,7 @@ import com.mybank.accountservice.db.model.AccountDetail;
 import com.mybank.accountservice.dto.AccountDetailDto;
 import com.mybank.accountservice.dto.BalanceDetailsDto;
 import com.mybank.accountservice.enums.CurrencyType;
+import com.mybank.accountservice.enums.FailureCode;
 import com.mybank.accountservice.enums.TransactionType;
 import com.mybank.accountservice.exception.AccountServiceException;
 import com.mybank.accountservice.request.AccountRequestDetails;
@@ -55,7 +56,7 @@ public class AccountService {
 		
 		if(!customerService.checkCustomerExist(accountRequestDetails.getCustomerId()))
 		{
-			throw new AccountServiceException("CustomerID Provided does not exist", HttpStatus.BAD_REQUEST);
+			throw new AccountServiceException(FailureCode.CD14, HttpStatus.BAD_REQUEST);
 		}
 		
 		AccountDetail accountDetail=commonUtils.getAccountDetailsFromDto(accountRequestDetails);
@@ -94,7 +95,7 @@ public class AccountService {
 			accountDetailDto.setBalanceInDifferentCurrency(balances);
 		}else
 		{
-			throw new AccountServiceException("accountId Provided does not exist", HttpStatus.BAD_REQUEST);
+			throw new AccountServiceException(FailureCode.CD12, HttpStatus.BAD_REQUEST);
 		}
 		return accountDetailDto;
 	}

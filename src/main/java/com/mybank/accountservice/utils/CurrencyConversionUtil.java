@@ -2,8 +2,10 @@ package com.mybank.accountservice.utils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -49,17 +51,17 @@ public class CurrencyConversionUtil {
 		default:
 				break;
 		}
-		return value;
+		return setValueWithTwoPrecision(value);
 	}
 	
 	public BigDecimal getValue(BigDecimal balance,double exchangeVale)
 	{
 		if(balance.compareTo(new BigDecimal(0))==0 )
 		{
-			return new BigDecimal(0.00);
+			return setValueWithTwoPrecision(new BigDecimal(0.00));
 		}
 		else{
-			return balance.multiply(new BigDecimal(exchangeVale));
+			return setValueWithTwoPrecision(balance.multiply(new BigDecimal(exchangeVale)));
 		}
 		
 	}
@@ -99,19 +101,28 @@ public class CurrencyConversionUtil {
 		default:
 				break;
 		}
-		return value;
+		return setValueWithTwoPrecision(value);
 	}
 private BigDecimal getUSDValue(BigDecimal balance, double exchangeVale) {
 	
 	if(balance.compareTo(new BigDecimal(0))==0 )
 	{
-		return new BigDecimal(0.00);
+		return setValueWithTwoPrecision(new BigDecimal(0.00));
 	}
 	else{
-		return balance.divide(new BigDecimal(exchangeVale),MathContext.DECIMAL128);
+		return setValueWithTwoPrecision( balance.divide(new BigDecimal(exchangeVale),MathContext.DECIMAL128));
 	}
 	}
 
+ 
+public BigDecimal setValueWithTwoPrecision(BigDecimal value)
+{
+	if(Objects.isNull(value))
+	{
+		return new BigDecimal(0.00);
+	}
+	return value.setScale(2, RoundingMode.UP);
+	}
 	
 }
 	

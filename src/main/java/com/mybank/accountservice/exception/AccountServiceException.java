@@ -2,7 +2,10 @@ package com.mybank.accountservice.exception;
 
 import org.springframework.http.HttpStatus;
 
+import com.mybank.accountservice.enums.FailureCode;
+
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 public class AccountServiceException extends RuntimeException {
@@ -10,16 +13,16 @@ public class AccountServiceException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	private HttpStatus httpStatus;
-	private String message;
+	private  FailureCode code;
 	 /*
 	   * Required when we want to add a custom message when throwing the exception
 	   * as throw new AccountServiceException(" Custom Unchecked Exception ");
 	   */
-	   public AccountServiceException(String message) {
+	   public AccountServiceException(FailureCode code) {
 	      // calling super invokes the constructors of all super classes
 	      // which helps to create the complete stacktrace.
-	      super(message);
-	      this.message=message;
+	      super(code.getMessage());
+	      this.code=code;
 	   }
 	   /*
 	   * Required when we want to wrap the exception generated inside the catch block and rethrow it
@@ -37,10 +40,10 @@ public class AccountServiceException extends RuntimeException {
 	      * throw new AccountServiceException(e, "File not found");
 	   * }
 	   */
-	   public AccountServiceException(String message, Throwable throwable) {
+	   public AccountServiceException(FailureCode code, Throwable throwable) {
 	      // call appropriate parent constructor
-	      super(message, throwable);
-	      this.message=message;
+	      super(code.getMessage(), throwable);
+	      this.code=code;
 	   }
 	   
 	   
@@ -48,12 +51,13 @@ public class AccountServiceException extends RuntimeException {
 		   * Required when we want to add a custom message when throwing the exception
 		   * as throw new AccountServiceException(" Custom Unchecked Exception ") and Want to set Http Status code for caller Service;
 		   */
-		   public AccountServiceException(String message,HttpStatus httpStatus) {
+		   public AccountServiceException(FailureCode code,HttpStatus httpStatus) {
 		      // calling super invokes the constructors of all super classes
 		      // which helps to create the complete stacktrace.
-		      super(message);
-		      this.message=message;
+		      super(code.getMessage());
+		      this.code=code;
 		      this.httpStatus=httpStatus;
 		      
 		   }
+		   
 }
