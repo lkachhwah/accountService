@@ -44,7 +44,7 @@
 Request:
 URL :http://localhost:<server.port>/account
 Body:
-```json
+```JSON5
 {
 		  "balance": 99.555,  // Initial expected balance.
 		  "country": "India", // Country where this account is opened
@@ -53,8 +53,8 @@ Body:
 			"SEK",
 			"USD"
 		  ],
-		  "customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. Default customer    
-		                               exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
+		  "customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. 
+		  			     //Default customer exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
 		}
 		  Response:
 		   {
