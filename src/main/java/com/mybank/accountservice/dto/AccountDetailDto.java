@@ -27,5 +27,5 @@ public class AccountDetailDto {
 	private BigDecimal balance; // main balance always be store in USD
 	private List<BalanceDetailsDto> balanceInDifferentCurrency; // we convert main balance into different currency for presentation
 	private List<CurrencyType> currencies;
-	private String stampKey;
+	private int  version;
 }

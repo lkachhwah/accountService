@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `ACCOUNTDETAILS`
     `openedOnDate` DATE NOT NULL,
     `balance` DECIMAL(15,2) NOT NULL,
     `allowedCurrencies` VARCHAR(100) NOT NULL,
-    `stampKey` VARCHAR(100) NOT NULL UNIQUE
+    `version` INTEGER NOT NULL
 );
 
 

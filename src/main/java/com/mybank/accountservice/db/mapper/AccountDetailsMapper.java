@@ -19,11 +19,11 @@ public interface AccountDetailsMapper {
 	@Select("SELECT * FROM ACCOUNTDETAILS WHERE accountId = #{accountId}")
 	Optional<AccountDetail> getAccountDetail(@Param("accountId") String accountId);
 	
-    @Insert("INSERT INTO ACCOUNTDETAILS(accountId, customerId,country,openedOnDate,balance,allowedCurrencies,stampKey) VALUES "
-    		+ "(#{accountId},#{customerId},#{country},#{openedOnDate},#{balance},#{allowedCurrencies},#{stampKey})")
+    @Insert("INSERT INTO ACCOUNTDETAILS(accountId, customerId,country,openedOnDate,balance,allowedCurrencies,version) VALUES "
+    		+ "(#{accountId},#{customerId},#{country},#{openedOnDate},#{balance},#{allowedCurrencies},#{version})")
 	public void  insert(AccountDetail  accountDetail);
     
     
-    @Update("Update ACCOUNTDETAILS set balance= #{balance},stampKey= #{stampKey} where accountId=#{accountId}")
-    public void updateBalanceForAccount(@Param("accountId") String accountId,@Param("stampKey") String stampKey,@Param("balance") BigDecimal balance);
+    @Update("Update ACCOUNTDETAILS set balance= #{balance},version= #{version} + 1 where accountId=#{accountId} and version=#{version}")
+    public void updateBalanceForAccount(@Param("accountId") String accountId,@Param("version") int version,@Param("balance") BigDecimal balance);
 }

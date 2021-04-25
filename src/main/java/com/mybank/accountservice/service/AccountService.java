@@ -83,7 +83,7 @@ public class AccountService {
 	private AccountDetail getNewAcountDetiail(AccountRequestDetails accountRequestDetails) {
 		AccountDetail accountDetail = commonUtils.getAccountDetailsFromDto(accountRequestDetails);
 		accountDetail.setAccountId(commonUtils.getUniqueNumber());
-		accountDetail.setStampKey(commonUtils.getUniqueNumber());
+		accountDetail.setVersion(0);
 		accountDetail.setOpenedOnDate(new Date());
 		accountDetail.setBalance(new BigDecimal(0));
 		return accountDetail;
@@ -110,22 +110,10 @@ public class AccountService {
 		return accountDetailDto;
 	}
 
-	public void updateBalance(String accountId, BigDecimal balance) {
-		String stampKey = commonUtils.getUniqueNumber();
-		accountDetailsMapper.updateBalanceForAccount(accountId, stampKey, balance);
-	}
-
-	public void updateBalanceBasedStampKey(AccountDetailDto accountDetailDto, BigDecimal updatedBalance) {
+	public void updateBalance(String accountId,int version, BigDecimal balance) {
 		synchronized (this) {
-			Optional<AccountDetail> accountDetail = accountDetailsMapper
-					.getAccountDetail(accountDetailDto.getAccountId());
-			accountDetail.ifPresent(details -> {
-				if (details.getStampKey().equals(accountDetailDto.getStampKey())) {
-					updateBalance(details.getAccountId(), updatedBalance);
-				} else {
-					throw new AccountServiceException(FailureCode.CD16);
-				}
-			});
+			accountDetailsMapper.updateBalanceForAccount(accountId,version,balance);
 		}
 	}
+
 }

@@ -56,7 +56,7 @@ public class TransactionServiceTest {
 		Mockito.when(currencyConversionUtil.getUSDValueOfCurrency(Mockito.any(BigDecimal.class),
 				Mockito.any(CurrencyType.class))).thenReturn(new BigDecimal(100));
 
-		Mockito.doNothing().when(accountService).updateBalance(Mockito.anyString(), Mockito.any(BigDecimal.class));
+		Mockito.doNothing().when(accountService).updateBalance(Mockito.anyString(),Mockito.anyInt(), Mockito.any(BigDecimal.class));
 		Mockito.doNothing().when(transactionDetailsMapper).insert(Mockito.any(TrasnsactionDetail.class));
 		Mockito.doNothing().when(eventPublisherService).asyncMethodWithVoidReturnType(Mockito.any(PublisherDto.class));
 

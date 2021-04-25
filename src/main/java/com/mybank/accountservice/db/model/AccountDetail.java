@@ -27,6 +27,5 @@ public class AccountDetail {
 	private Date openedOnDate;
 	private BigDecimal balance; // main balance always be store in USD
 	private String allowedCurrencies;
-	@NonNull
-	private String stampKey;
+	private int  version;
 }
