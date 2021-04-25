@@ -4,6 +4,7 @@ MVN
 Java 8 JDK
 
 #Steps To Run:
+~~~
 1.check out Project from repository : https://github.com/lkachhwah/accountService.git ,using git .
 2.Check above Software are installed and keep rabbit MQ up and running.
 3. Go to application.properties 
@@ -22,7 +23,7 @@ Java 8 JDK
 5. Once build is ready run application using command : java -jar accountservice-0.0.1-SNAPSHOT.jar
 6. Verification step check log And we should be able see log : "*************Started************" .
 7. Open the swagger ui : localhost:<server.port>/swagger-ui.html
-
+~~~
 #Operation Details
 
 ###Customer  Operation Details :
