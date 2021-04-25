@@ -1,11 +1,10 @@
-# Pre install software need:
-~~~
+## Pre install software need:
 * Rabbit MQ
 * MVN
 * Java 8 JDK
-~~~
 
-#Steps To Run:
+
+## Steps To Run:
 ~~~
 1.check out Project from repository : https://github.com/lkachhwah/accountService.git ,using git .
 2.Check above Software are installed and keep rabbit MQ up and running.
@@ -26,38 +25,40 @@
 6. Verification step check log And we should be able see log : "*************Started************" .
 7. Open the swagger ui : localhost:<server.port>/swagger-ui.html
 ~~~
-#Operation Details
+# Operation Details
 
-###Customer  Operation Details :
-
+### Customer  Operation Details :
+~~~
 1.Currently no api is provided to add and get Customer details, and this are created on start up of application ,based on data provided in file  data.sql. If you wan to
   more customer  add entry in this file below is sample request:
-  
-  INSERT INTO CustomerDetails VALUES ('<CustomerID>', '<Customer Name>','<Customer Email>');
-  
+~~~
+```bash
+  INSERT INTO CustomerDetails VALUES ('<CustomerID>', '<Customer Name>','<Customer Email>')
+  ```
 
-###Account Operation Details :
-
+### Account Operation Details :
+~~~
 1. Create Account api [POST]:
-	- This endpoint is used to create the account for a customer ,with initial amount(USD) and list of supported currency.Please refer below sample request and attribute
-	  details.
-		Request:
-		URL :http://localhost:<server.port>/account
-		Body:
-		{
-		  "balance": 99.555,  - Initial expected balance.
-		  "country": "India", - Country where this account is opened
-		  "currencies": [   - list of supported Currency - possible values -EUR, SEK, GBP, USD
+	- This endpoint is used to create the account for a customer ,with initial amount(USD) and list of supported currency.Please refer below sample request and attribute details.
+~~~
+Request:
+URL :http://localhost:<server.port>/account
+Body:
+```json
+{
+		  "balance": 99.555,  // Initial expected balance.
+		  "country": "India", // Country where this account is opened
+		  "currencies": [   // list of supported Currency - possible values -EUR, SEK, GBP, USD
 		    "EUR",
 			"SEK",
 			"USD"
 		  ],
-		  "customerId": "lkachhwah"  - CustomerId, Make sure this customer exist in system before creating account. Default customer    
+		  "customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. Default customer    
 		                               exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
 		}
 		  Response:
 		   {
-			  "accountId": "1618755265713", - Genrated Account number
+			  "accountId": "1618755265713", //Genrated Account number
 			  "customerId": "lkachhwah",
 			  "country": "India",
 			  "openedOnDate": "2021-04-18T14:14:25.713+00:00",
@@ -76,7 +77,7 @@
 			    }
 			  ]
 			}
-		
+```
 2. Get  Account Details api [GET]:
   -	This endpoint is used to get  the account detail for a accountId.
     Request:
