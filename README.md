@@ -108,26 +108,26 @@
         URL :http://localhost:<server.port>/transaction
         Body:
 		{
-			  "accountId": "1618755265713", - Perform on accountID
-			  "amount": 10,   - Amount of trasaction 
-			  "description": "Token Amount", - Detail about transaction
-			  "transactionCurrency": "EUR",   - Currency of transaction,  possible values -EUR, SEK, GBP, USD
-			  "transactionType": "OUT"   Mode of operation - IN,OUT.
-			}
+		  "accountId": "1618755265713", - Perform on accountID
+		  "amount": 10,   - Amount of trasaction 
+		  "description": "Token Amount", - Detail about transaction
+		  "transactionCurrency": "EUR",   - Currency of transaction,  possible values -EUR, SEK, GBP, USD
+		  "transactionType": "OUT"   Mode of operation - IN,OUT.
+		}
 	  Response:
-				  {
-			  "transactionId": "1618756518024",
-			  "customerId": "lkachhwah",
-			  "accountId": "1618755265713",
-			  "transactionType": "OUT",
-			  "description": "Token Amount",
-			  "trasactionDate": "2021-04-18T14:35:18.024+00:00", 
-			  "amount": 10,
-			  "status": "SUCCESS",
-			  "transactionCurrency": "EUR",
-			  "accountBalance": "72.65",  - remaining balance after operation in transactionCurrency.
-			  "accountBalanceInUSD": "87.51" - remaining balance after operation in USD.
-			}
+		{
+			"transactionId": "1618756518024",
+			"customerId": "lkachhwah",
+			"accountId": "1618755265713",
+			"transactionType": "OUT",
+			"description": "Token Amount",
+			"trasactionDate": "2021-04-18T14:35:18.024+00:00", 
+			"amount": 10,
+			"status": "SUCCESS",
+			"transactionCurrency": "EUR",
+			"accountBalance": "72.65",  - remaining balance after operation in transactionCurrency.
+			"accountBalanceInUSD": "87.51" - remaining balance after operation in USD.
+		}
         
 2.Transaction Details for a AccountId [GET]:
    - This endpoint is used to get all  trasactions details  for a accountId.Please refer below sample request and attribute details.
@@ -135,18 +135,20 @@
         Header - accountId: <Account number generated in create call> e.g: 1618755265713
         URL : http://localhost:<server.port>/transaction
 	  Response:
-			[	  {
-			  "transactionId": "1618756518024",
-			  "customerId": "lkachhwah",
-			  "accountId": "1618755265713",
-			  "transactionType": "OUT",
-			  "description": "Token Amount",
-			  "trasactionDate": "2021-04-18T14:35:18.024+00:00", 
-			  "amount": 10,
-			  "status": "SUCCESS",
-			  "transactionCurrency": "EUR",
-			  "accountBalance": "72.65",  - remaining balance after operation in transactionCurrency.
-			  "accountBalanceInUSD": "87.51" - remaining balance after operation in USD.
-			}]
+		[
+		{
+			"transactionId": "1618756518024",
+			"customerId": "lkachhwah",
+			"accountId": "1618755265713",
+			"transactionType": "OUT",
+			"description": "Token Amount",
+			"trasactionDate": "2021-04-18T14:35:18.024+00:00", 
+			"amount": 10,
+			"status": "SUCCESS",
+			"transactionCurrency": "EUR",
+			"accountBalance": "72.65",  - remaining balance after operation in transactionCurrency.
+			"accountBalanceInUSD": "87.51" - remaining balance after operation in USD.
+		}
+		]
 ~~~
 
