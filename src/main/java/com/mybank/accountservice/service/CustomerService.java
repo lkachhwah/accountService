@@ -12,9 +12,6 @@ public class CustomerService {
 	CustomerDetailsMapper customerDetailsMapper;
 
 	public boolean checkCustomerExist(String customerId) {
-		if (customerDetailsMapper.getCustomerDetails(customerId).isPresent())
-			return true;
-		else
-			return false;
+		return customerDetailsMapper.getCustomerDetails(customerId).isPresent();
 	}
 }

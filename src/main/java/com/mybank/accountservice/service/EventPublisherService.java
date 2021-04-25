@@ -19,10 +19,12 @@ public class EventPublisherService<T> {
 
 	@Autowired
 	RabbitTemplate rabbitTemplate;
+	
+	@Autowired
+	ObjectMapper objectMapper;
 	@Async
 	public void asyncMethodWithVoidReturnType( PublisherDto<T> object) {
 		log.info("Pushing Message : {}",object);
-		ObjectMapper objectMapper = new ObjectMapper();
 	    objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter(objectMapper));
 		rabbitTemplate.convertAndSend("myTestQueueExchange","myTestQueueKey", object);

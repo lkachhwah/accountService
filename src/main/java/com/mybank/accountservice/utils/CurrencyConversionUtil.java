@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class CurrencyConversionUtil {
 
 	public List<BalanceDetailsDto> getBalanceDetails(List<String> currenciessupportedList, BigDecimal balance) {
 		if (CollectionUtils.isEmpty(currenciessupportedList)) {
-			return new ArrayList<>();
+			return Collections.EMPTY_LIST;
 		}
 		return currenciessupportedList.stream()
 				.map(currencyType -> BalanceDetailsDto.builder().currency(CurrencyType.valueOf(currencyType))
