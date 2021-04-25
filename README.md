@@ -104,7 +104,7 @@
 ~~~
 1. Perform Transaction [POST]:
    - This endpoint is used to perform trasaction for a accountId.Please refer below sample request and attribute details.
-      Request:
+   * Request:
         URL :http://localhost:<server.port>/transaction
         Body:
 		{
@@ -114,7 +114,7 @@
 		  "transactionCurrency": "EUR",   - Currency of transaction,  possible values -EUR, SEK, GBP, USD
 		  "transactionType": "OUT"   Mode of operation - IN,OUT.
 		}
-	  Response:
+   * Response:
 		{
 			"transactionId": "1618756518024",
 			"customerId": "lkachhwah",
@@ -131,10 +131,10 @@
         
 2.Transaction Details for a AccountId [GET]:
    - This endpoint is used to get all  trasactions details  for a accountId.Please refer below sample request and attribute details.
-        Request:
+   * Request:
         Header - accountId: <Account number generated in create call> e.g: 1618755265713
         URL : http://localhost:<server.port>/transaction
-	  Response:
+   * Response:
 		[
 		{
 			"transactionId": "1618756518024",
