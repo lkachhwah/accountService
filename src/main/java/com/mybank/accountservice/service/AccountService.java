@@ -1,3 +1,4 @@
+
 package com.mybank.accountservice.service;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mybank.accountservice.db.mapper.AccountDetailsMapper;
 import com.mybank.accountservice.db.model.AccountDetail;
@@ -47,6 +49,7 @@ public class AccountService {
 	@Autowired
 	TransactionService transactionService;
 
+	@Transactional(rollbackFor=Exception.class)
 	public AccountDetailDto createAccount(AccountRequestDetails accountRequestDetails) {
 		validationUtils.validateCreateAccountDetails(accountRequestDetails);
 		log.info("[createAccount] START for CustomerID:{}", accountRequestDetails.getCustomerId());
@@ -72,7 +75,7 @@ public class AccountService {
 		log.debug("[createAccount] - Transaction-END for CustomerID:{} Acount Details: {}",
 				accountRequestDetails.getCustomerId(), accountDetail.getAccountId());
 
-		log.info("[createAccount] START for CustomerID:{} acountID:{}", accountRequestDetails.getCustomerId(),
+		log.info("[createAccount] END for CustomerID:{} acountID:{}", accountRequestDetails.getCustomerId(),
 				accountDetail.getAccountId());
 		return getAccountDetails(accountDetail.getAccountId());
 	}

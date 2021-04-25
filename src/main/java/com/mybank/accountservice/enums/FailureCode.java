@@ -19,7 +19,8 @@ public enum FailureCode {
 	 CD13("Insufficient Balance"),
 	 CD14("CustomerId is does not exist"),
 	 CD15("Internal porcessing Error"),
-	 CD16("Multiple transaction found please try after sometime");
+	 CD16("Multiple transaction found please try after sometime"),
+	 CD17("Request Is Null or Empty");
 	 
 	 
 	 

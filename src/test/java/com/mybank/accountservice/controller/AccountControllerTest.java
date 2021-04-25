@@ -28,14 +28,14 @@ import com.mybank.accountservice.utils.DummyObjectProvider;
 public class AccountControllerTest {
 
 	private MockMvc mockMvc;
-	
+
 	@InjectMocks
 	private AccountController accountController;
 	@Mock
 	private AccountService accountService;
-	
+
 	private JacksonTester<AccountDetailDto> createAccountDtoJacksonTester;
-	
+
 	@BeforeEach
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
@@ -43,45 +43,41 @@ public class AccountControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		JacksonTester.initFields(this, objectMapper);
 	}
-	
+
 	@Test
 	public void testCreateAccount() throws Exception {
 		Mockito.when(accountService.createAccount(Mockito.any(AccountRequestDetails.class)))
 				.thenReturn(DummyObjectProvider.setupAccountDetailDto());
 		createMethodAndVerifyResponse("/account", DummyObjectProvider.createAccountReqJson);
 	}
-	
+
 	@Test
 	public void testGetAccount() throws Exception {
 		Mockito.when(accountService.getAccountDetails(Mockito.anyString()))
 				.thenReturn(DummyObjectProvider.setupAccountDetailDto());
 		createGetMethodAndVerifyResponse("/account", "TEST_ACCOUNT_ID");
 	}
-	
+
 	private void createMethodAndVerifyResponse(String methodUrl, String reqJson) throws Exception {
-		
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.post(methodUrl)
-				.content(reqJson)
-				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-		
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(methodUrl).content(reqJson)
+				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String mockResponse = result.getResponse().getContentAsString();
-		
+
 		AccountDetailDto accountDetailDto = createAccountDtoJacksonTester.parseObject(mockResponse);
 		assertEquals("TEST_ACCOUNT_ID", accountDetailDto.getAccountId());
 	}
-	
+
 	private void createGetMethodAndVerifyResponse(String methodUrl, String accountId) throws Exception {
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(methodUrl)
-				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
 				.header("accountId", accountId);
-		
+
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String mockResponse = result.getResponse().getContentAsString();
-		
+
 		AccountDetailDto accountDetailDto = createAccountDtoJacksonTester.parseObject(mockResponse);
 		assertEquals("TEST_ACCOUNT_ID", accountDetailDto.getAccountId());
 	}

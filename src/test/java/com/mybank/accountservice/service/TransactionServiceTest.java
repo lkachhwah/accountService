@@ -62,13 +62,13 @@ public class TransactionServiceTest {
 
 		Mockito.when(commonUtils.getDTOFromTransactionDetail(Mockito.any(TrasnsactionDetail.class)))
 				.thenReturn(DummyObjectProvider.setupTrasnsactionDetailDto());
-		
-		TrasnsactionDetailDto response = transactionService.intiateOperation(DummyObjectProvider.setupTransactionRequestDetails());
+
+		TrasnsactionDetailDto response = transactionService
+				.intiateOperation(DummyObjectProvider.setupTransactionRequestDetails(), 1, null);
 		assertNotNull(response);
 		assertEquals("TEST_ACCOUNT_ID", response.getAccountId());
 	}
-	
-	
+
 	@Test
 	public void getTrasactionDetails() {
 		Mockito.when(transactionDetailsMapper.getTrasnsactionDetailsByAccountId(Mockito.anyString()))

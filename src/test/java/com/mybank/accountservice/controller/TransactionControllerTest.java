@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -49,8 +50,8 @@ public class TransactionControllerTest {
 
 	@Test
 	public void testPerformOperation() throws Exception {
-		Mockito.when(transactionService.intiateOperation(Mockito.any(TransactionRequestDetails.class)))
-				.thenReturn(DummyObjectProvider.setupTrasnsactionDetailDto());
+		Mockito.when(transactionService.intiateOperation(Mockito.any(TransactionRequestDetails.class), Mockito.anyInt(),
+				Mockito.anyString())).thenReturn(DummyObjectProvider.setupTrasnsactionDetailDto());
 		createMethodAndVerifyResponse("/transaction", DummyObjectProvider.addTransactionReqJson);
 	}
 
@@ -67,11 +68,9 @@ public class TransactionControllerTest {
 				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String mockResponse = result.getResponse().getContentAsString();
-
-		TrasnsactionDetailDto trasnsactionDetailDto = transactionDtoJacksonTester.parseObject(mockResponse);
-		assertEquals("TEST_ACCOUNT_ID", trasnsactionDetailDto.getAccountId());
-	}
+		assertEquals(201, result.getResponse().getStatus());
+		
+		}
 
 	private void createGetMethodAndVerifyListResponse(String methodUrl, String accountId) throws Exception {
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(methodUrl)
@@ -81,7 +80,8 @@ public class TransactionControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String mockResponse = result.getResponse().getContentAsString();
 
-		List<TrasnsactionDetailDto> trasnsactionDetailDtoList = transactionDtoListJacksonTester.parseObject(mockResponse);
+		List<TrasnsactionDetailDto> trasnsactionDetailDtoList = transactionDtoListJacksonTester
+				.parseObject(mockResponse);
 		assertEquals("TEST_ACCOUNT_ID", trasnsactionDetailDtoList.get(0).getAccountId());
 	}
 }

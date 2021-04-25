@@ -48,15 +48,21 @@ public class AccountServiceTest {
 		Mockito.when(customerService.checkCustomerExist(Mockito.anyString())).thenReturn(true);
 		Mockito.when(commonUtils.getUniqueNumber()).thenReturn("TEST_ACCOUNT_ID");
 		Mockito.when(commonUtils.getAccountDetailsFromDto(Mockito.any(AccountRequestDetails.class)))
-				.thenReturn(DummyObjectProvider.setupAccountDetail());
+				.thenReturn(DummyObjectProvider.setupAccountDetail().get());
 		Mockito.doNothing().when(accountDetailsMapper).insert(Mockito.any(AccountDetail.class));
-		Mockito.when(transactionService.intiateOperation(Mockito.any(TransactionRequestDetails.class)))
+		Mockito.when(transactionService.intiateOperation(Mockito.any(TransactionRequestDetails.class),Mockito.anyInt(),Mockito.anyString()))
 				.thenReturn(DummyObjectProvider.setupTrasnsactionDetailDto());
 		Mockito.when(currencyConversionUtil.getBalanceDetails(Mockito.anyList(), Mockito.any(BigDecimal.class)))
 				.thenReturn(DummyObjectProvider.getListOfBalances());
 		Mockito.when(commonUtils.getAccountDetailsDtoFromAcccountDetail(Mockito.any(AccountDetail.class)))
 				.thenReturn(DummyObjectProvider.setupAccountDetailDto());
-		
+		Mockito.when(accountDetailsMapper.getAccountDetail(Mockito.anyString()))
+				.thenReturn(DummyObjectProvider.setupAccountDetail());
+		Mockito.when(commonUtils.getAccountDetailsDtoFromAcccountDetail(Mockito.any(AccountDetail.class)))
+				.thenReturn(DummyObjectProvider.setupAccountDetailDto());
+		Mockito.when(commonUtils.getCurrecnyListFromString(Mockito.anyString())).thenReturn(Arrays.asList("USD"));
+		Mockito.when(currencyConversionUtil.getBalanceDetails(Mockito.anyList(), Mockito.any(BigDecimal.class)))
+				.thenReturn(DummyObjectProvider.getListOfBalances());
 		AccountDetailDto response = accountService.createAccount(DummyObjectProvider.setupAccountRequestDetails());
 		assertEquals("TEST_ACCOUNT_ID", response.getAccountId());
 	}
