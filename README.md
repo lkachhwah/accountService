@@ -46,37 +46,33 @@ URL :http://localhost:<server.port>/account
 Body:
 ```JSON5
 {
-		  "balance": 99.555,  // Initial expected balance.
-		  "country": "India", // Country where this account is opened
-		  "currencies": [   // list of supported Currency - possible values -EUR, SEK, GBP, USD
-		    "EUR",
-			"SEK",
-			"USD"
-		  ],
-		  "customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. 
-		  			     //Default customer exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
-		}
-		  Response:
-		   {
-			  "accountId": "1618755265713", //Genrated Account number
-			  "customerId": "lkachhwah",
-			  "country": "India",
-			  "openedOnDate": "2021-04-18T14:14:25.713+00:00",
-			  "balanceInDifferentCurrency": [
-			    {
-			      "amount": 82.63065,
-			      "currency": "EUR"
-			    },
-			    {
-			      "amount": 840.2442,
-			      "currency": "SEK"
-			    },
-			    {
-			      "amount": 99.555,
-			      "currency": "USD"
-			    }
-			  ]
-			}
+"balance": 99.555,  // Initial expected balance.
+"country": "India", // Country where this account is opened
+"currencies": [ "EUR","SEK","USD"],  // list of supported Currency - possible values -EUR, SEK, GBP, USD
+"customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. 
+		     //Default customer exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
+}
+Response:
+{
+  "accountId": "1618755265713", //Genrated Account number
+  "customerId": "lkachhwah",
+  "country": "India",
+  "openedOnDate": "2021-04-18T14:14:25.713+00:00",
+  "balanceInDifferentCurrency": [
+    {
+      "amount": 82.63065,
+      "currency": "EUR"
+    },
+    {
+      "amount": 840.2442,
+      "currency": "SEK"
+    },
+    {
+      "amount": 99.555,
+      "currency": "USD"
+    }
+  ]
+}
 ```
 2. Get  Account Details api [GET]:
   -	This endpoint is used to get  the account detail for a accountId.
