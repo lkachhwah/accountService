@@ -10,13 +10,13 @@
 1.check out Project from repository : https://github.com/lkachhwah/accountService.git ,using git .
 2.Check above Software are installed and keep rabbit MQ up and running.
 3. Go to application.properties 
-  * Update RabbitMq property :
+  1. Update RabbitMq property :
 	    reportservice.topic.name=myTestQueue
 	    accountservice.exchange.name=myTestQueueExchange
 	    accountservice.topic.name=myTestQueue
 	    accountservice.routing.key=myTestQueueKey
   
-  * Update Currency Exchange rate property :
+  2. Update Currency Exchange rate property :
 	    accountservice.exchange.rate.usd.to.eur=0.83
 	    accountservice.exchange.rate.usd.to.sek=8.44
 	    accountservice.exchange.rate.usd.to.gbp=0.72
