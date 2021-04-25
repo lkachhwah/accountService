@@ -49,6 +49,7 @@ public class AccountService {
 	@Autowired
 	TransactionService transactionService;
 
+	// This method is used to  Create account for a customer ,Update intial balance in newly created account.
 	@Transactional(rollbackFor=Exception.class)
 	public AccountDetailDto createAccount(AccountRequestDetails accountRequestDetails) {
 		validationUtils.validateCreateAccountDetails(accountRequestDetails);
@@ -80,6 +81,7 @@ public class AccountService {
 		return getAccountDetails(accountDetail.getAccountId());
 	}
 
+	// This method is used to  Create in newly  account pojo to be saved in DB .
 	private AccountDetail getNewAcountDetiail(AccountRequestDetails accountRequestDetails) {
 		AccountDetail accountDetail = commonUtils.getAccountDetailsFromDto(accountRequestDetails);
 		accountDetail.setAccountId(commonUtils.getUniqueNumber());
@@ -89,6 +91,7 @@ public class AccountService {
 		return accountDetail;
 	}
 
+   // This method is used to  fetch   account Detail  DB for a accountId .
 	public AccountDetailDto getAccountDetails(String accountId) {
 		log.info("[getAccountDetails] START for accountId:{}", accountId);
 		Optional<AccountDetail> accountDetail = accountDetailsMapper.getAccountDetail(accountId);
@@ -101,6 +104,7 @@ public class AccountService {
 		return accountDetailDto;
 	}
 
+	// This method is used to convert DB model in Account DTO.
 	private AccountDetailDto getAcountDetailsDto(Optional<AccountDetail> accountDetail) {
 		AccountDetail details = accountDetail.get();
 		AccountDetailDto accountDetailDto = commonUtils.getAccountDetailsDtoFromAcccountDetail(details);
@@ -110,9 +114,14 @@ public class AccountService {
 		return accountDetailDto;
 	}
 
-	public void updateBalance(String accountId,int version, BigDecimal balance) {
+	// This method is used to update balance in existing account.
+	public void updateBalance(String accountId, int version, BigDecimal balance) {
 		synchronized (this) {
-			accountDetailsMapper.updateBalanceForAccount(accountId,version,balance);
+			try {
+				accountDetailsMapper.updateBalanceForAccount(accountId, version, balance);
+			} catch (Exception e) {
+				throw new AccountServiceException(FailureCode.CD16);
+			}
 		}
 	}
 

@@ -64,6 +64,7 @@ public class CommonUtils {
 			return null;
 	}
 
+	//This Methode is used to balance in account is sufficient to perform Operation
 	public void checkSufficientBalanceToPerformOperation(TransactionRequestDetails transactionRequestDetails,
 			BalanceDetailsDto balanceDetailsDto) {
 

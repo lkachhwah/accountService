@@ -16,17 +16,21 @@ import com.mybank.accountservice.dto.TrasnsactionDetailDto;
 import com.mybank.accountservice.request.TransactionRequestDetails;
 import com.mybank.accountservice.service.TransactionService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/transaction")
 @Slf4j
+@Api(produces = "application/json", value = "Operations pertaining to manage Transaction for accounts ")
 public class TransactionController {
 
 	@Autowired
 	TransactionService transactionService;
 
 	@PostMapping
+	@ApiOperation(value = "This end point is use to perform Transaction a Acount")
 	public ResponseEntity<TrasnsactionDetailDto> performOperation(
 			@RequestBody TransactionRequestDetails transactionRequestDetails) {
 		log.info(" Perform transaction accountId:{}, Type:{}", transactionRequestDetails.getAccountId(),
@@ -36,6 +40,7 @@ public class TransactionController {
 	}
 
 	@GetMapping
+	@ApiOperation(value = "This end point is use to get Transaction Detail a Acount")
 	public ResponseEntity<List<TrasnsactionDetailDto>> getTransactionDetail(@RequestHeader String accountId) {
 		log.info(" Get transactions for accountId:{}", accountId);
 		return new ResponseEntity<List<TrasnsactionDetailDto>>(transactionService.getTrasactionDetails(accountId),

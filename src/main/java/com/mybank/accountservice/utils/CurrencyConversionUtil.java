@@ -28,6 +28,7 @@ public class CurrencyConversionUtil {
 	@Value("${accountservice.exchange.rate.usd.to.gbp:0.72}")
 	private double usdToGbpExchangeRate;
 
+	// Used to convert particular amount in different currency provided in input 
 	public BigDecimal getValueByCurrency(BigDecimal balance, CurrencyType currencyType) {
 
 		BigDecimal value = new BigDecimal(0);
@@ -51,6 +52,7 @@ public class CurrencyConversionUtil {
 		return setValueWithTwoPrecision(value);
 	}
 
+	// Used to convert particular amount in different currency provided in input
 	public BigDecimal getValue(BigDecimal balance, double exchangeVale) {
 		if (balance.compareTo(new BigDecimal(0)) == 0) {
 			return setValueWithTwoPrecision(new BigDecimal(0.00));
@@ -60,6 +62,7 @@ public class CurrencyConversionUtil {
 
 	}
 
+	// Used to convert particular amount in different currency provided in input list
 	public List<BalanceDetailsDto> getBalanceDetails(List<String> currenciessupportedList, BigDecimal balance) {
 		if (CollectionUtils.isEmpty(currenciessupportedList)) {
 			return Collections.EMPTY_LIST;
@@ -70,6 +73,7 @@ public class CurrencyConversionUtil {
 				.collect(Collectors.toList());
 	}
 
+	// Used to convert particular amount in USD from different currency provided in input
 	public BigDecimal getUSDValueOfCurrency(BigDecimal balance, CurrencyType currencyType) {
 
 		BigDecimal value = new BigDecimal(0);
@@ -102,6 +106,7 @@ public class CurrencyConversionUtil {
 		}
 	}
 
+	// Used to convert particular amount into 2 precision value
 	public BigDecimal setValueWithTwoPrecision(BigDecimal value) {
 		if (Objects.isNull(value)) {
 			return new BigDecimal(0.00);

@@ -11,6 +11,7 @@ public class CustomerService {
 	@Autowired
 	CustomerDetailsMapper customerDetailsMapper;
 
+	// This method is used to  get whether a paticulat user is present in DB or not
 	public boolean checkCustomerExist(String customerId) {
 		return customerDetailsMapper.getCustomerDetails(customerId).isPresent();
 	}

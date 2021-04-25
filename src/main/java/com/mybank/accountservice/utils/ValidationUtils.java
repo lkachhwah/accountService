@@ -21,6 +21,7 @@ import com.mybank.accountservice.request.TransactionRequestDetails;
 @Component
 public class ValidationUtils {
 
+	// Used to Validated AccountRequestDetails for account creation
 	public void validateCreateAccountDetails(AccountRequestDetails accountRequestDetails) {
 		checkAndThrowExceptionIfMissing(accountRequestDetails, FailureCode.CD17);
 		checkAndThrowExceptionIfMissing(accountRequestDetails.getCountry(), FailureCode.CD1);
@@ -57,6 +58,7 @@ public class ValidationUtils {
 		}
 	}
 
+	// Used to Validated TransactionRequestDetails for transaction operation perfromance
 	public void validatePerformTransactionDetails(TransactionRequestDetails transactionRequestDetails) {
 		checkAndThrowExceptionIfMissing(transactionRequestDetails, FailureCode.CD17);
 		checkAndThrowExceptionIfMissing(transactionRequestDetails.getAmount(), FailureCode.CD8);

@@ -54,7 +54,8 @@ public class TransactionService {
 
 	int retryCount = 5;
 
-	@Transactional(rollbackFor = Exception.class)
+	// This method is used to perform transaction in existing account, update
+	// balance in account and Publish message to reporting service
 	public TrasnsactionDetailDto intiateOperation(TransactionRequestDetails transactionRequestDetails, int count,
 			String tranactionId) {
 		tranactionId = StringUtils.isEmpty(tranactionId) ? commonUtils.getUniqueNumber() : tranactionId;
@@ -74,28 +75,48 @@ public class TransactionService {
 			updatedBalance = updatedBalance(transactionRequestDetails, accountDetailDto);
 			trasnsactionDetail.setAccountBalance(currencyConversionUtil.getValueByCurrency(updatedBalance,
 					trasnsactionDetail.getTransactionCurrency()));
-			trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
-			trasnsactionDetail.setStatus(TransactionStatus.SUCCESS);
-			accountService.updateBalance(accountDetailDto.getAccountId(), accountDetailDto.getVersion(),
-					updatedBalance);
-			log.info("[intiateOperation] -ACOUNT UPDATED acountId:{},,tranactionId:{}",
-					transactionRequestDetails.getAccountId(), tranactionId);
-			transactionDetailsMapper.insert(trasnsactionDetail);
-			PublisherDto<TrasnsactionDetail> data = new PublisherDto<TrasnsactionDetail>();
-			data.add(trasnsactionDetail);
-			eventPublisherService.asyncMethodWithVoidReturnType(data);
+			updateDetailsInDB(transactionRequestDetails, tranactionId, accountDetailDto, updatedBalance,
+					trasnsactionDetail);
+			publishMessage(trasnsactionDetail);
 
 		} catch (AccountServiceException e) {
-			log.error("[intiateOperation] -EXCEPTION acountId:{} , ErrorCode:{} ,ErrorMessage:{} ,tranactionId:{}",
+			log.error(
+					"[intiateOperation] -EXCEPTION Check Retry acountId:{} , ErrorCode:{} ,ErrorMessage:{} ,tranactionId:{}",
 					transactionRequestDetails.getAccountId(), e.getCode(), e.getMessage(), tranactionId);
 			checkAndRetry(transactionRequestDetails, count, trasnsactionDetail, e);
 			throw e;
+		} catch (Exception e) {
+			log.error(
+					"[intiateOperation] -EXCEPTION Something Went wrong : acountId:{} ,ErrorMessage:{} ,tranactionId:{}",
+					transactionRequestDetails.getAccountId(), e.getMessage(), tranactionId);
+			throw new AccountServiceException(FailureCode.CD15, e);
 		}
 		log.info("[intiateOperation] -END acountId:{} ,TransactionId:{}", trasnsactionDetail.getAccountId(),
 				tranactionId);
 		return commonUtils.getDTOFromTransactionDetail(trasnsactionDetail);
 	}
 
+	// Publish Message to topic
+	private void publishMessage(TrasnsactionDetail trasnsactionDetail) {
+		PublisherDto<TrasnsactionDetail> data = new PublisherDto<TrasnsactionDetail>();
+		data.add(trasnsactionDetail);
+		eventPublisherService.asyncMethodWithVoidReturnType(data);
+	}
+
+	// Update Data in DB
+	@Transactional(rollbackFor = Exception.class)
+	private void updateDetailsInDB(TransactionRequestDetails transactionRequestDetails, String tranactionId,
+			AccountDetailDto accountDetailDto, BigDecimal updatedBalance, TrasnsactionDetail trasnsactionDetail) {
+		trasnsactionDetail.setAccountBalanceInUSD(updatedBalance);
+		trasnsactionDetail.setStatus(TransactionStatus.SUCCESS);
+		accountService.updateBalance(accountDetailDto.getAccountId(), accountDetailDto.getVersion(), updatedBalance);
+		log.info("[intiateOperation] -ACOUNT UPDATED acountId:{},,tranactionId:{}",
+				transactionRequestDetails.getAccountId(), tranactionId);
+		transactionDetailsMapper.insert(trasnsactionDetail);
+	}
+
+	// this methode check if transaction failed for a specific error code and
+	// retry accordingly
 	private void checkAndRetry(TransactionRequestDetails transactionRequestDetails, int count,
 			TrasnsactionDetail trasnsactionDetail, AccountServiceException e) {
 		if (Objects.nonNull(e.getCode()) && FailureCode.CD16 == e.getCode() && count <= retryCount) {
@@ -105,6 +126,8 @@ public class TransactionService {
 		}
 	}
 
+	// this methode is used to get TransactionDetail object from
+	// transactionRequestDetails
 	private TrasnsactionDetail getTransactionDetail(TransactionRequestDetails transactionRequestDetails,
 			AccountDetailDto accountDetailDto, BigDecimal updatedBalance) {
 		TrasnsactionDetail trasnsactionDetail = new TrasnsactionDetail();

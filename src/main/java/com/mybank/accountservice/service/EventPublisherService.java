@@ -22,6 +22,8 @@ public class EventPublisherService<T> {
 	
 	@Autowired
 	ObjectMapper objectMapper;
+	
+	// This method is used to  Publish message to Raven topic for reporting service
 	@Async
 	public void asyncMethodWithVoidReturnType( PublisherDto<T> object) {
 		log.info("Pushing Message : {}",object);
