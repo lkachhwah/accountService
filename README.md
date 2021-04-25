@@ -40,66 +40,71 @@
 ~~~
 1. Create Account api [POST]:
 	- This endpoint is used to create the account for a customer ,with initial amount(USD) and list of supported currency.Please refer below sample request and attribute details.
-	### Request:
+	Request:
 	* URL: http://localhost:<server.port>/account
 	* Body:
-	```JSON5
 		{
-		"balance": 99.555,  // Initial expected balance.
-		"country": "India", // Country where this account is opened
-		"currencies": [ "EUR","SEK","USD"],  // list of supported Currency - possible values -EUR, SEK, GBP, USD
-		"customerId": "lkachhwah"  // CustomerId, Make sure this customer exist in system before creating account. 
-				     //Default customer exist in sytem using which we can perform operation:lkachhwah,pkachhwah. 
+		   "balance":99.555,
+		   "country":"India",
+		   "currencies":[
+		      "EUR",
+		      "SEK",
+		      "USD"
+		   ],
+		   ,
+		   "SEK",
+		   "GBP",
+		   "USD""customerId":"lkachhwah",
+		   "Make sure this customer exist in system before creating account. 
+						     //Default customer exist in sytem using which we can perform operation":"lkachhwah",
+		   "pkachhwah."
+		}"Response":{
+		   "accountId":"1618755265713",
+		   "customerId":"lkachhwah",
+		   "country":"India",
+		   "openedOnDate":"2021-04-18T14:14:25.713+00:00",
+		   "balanceInDifferentCurrency":[
+		      {
+			 "amount":82.63065,
+			 "currency":"EUR"
+		      },
+		      {
+			 "amount":840.2442,
+			 "currency":"SEK"
+		      },
+		      {
+			 "amount":99.555,
+			 "currency":"USD"
+		      }
+		   ]
 		}
-		Response:
-		{
-		  "accountId": "1618755265713", //Genrated Account number
-		  "customerId": "lkachhwah",
-		  "country": "India",
-		  "openedOnDate": "2021-04-18T14:14:25.713+00:00",
-		  "balanceInDifferentCurrency": [
-		    {
-		      "amount": 82.63065,
-		      "currency": "EUR"
-		    },
-		    {
-		      "amount": 840.2442,
-		      "currency": "SEK"
-		    },
-		    {
-		      "amount": 99.555,
-		      "currency": "USD"
-		    }
-		  ]
-		}
-	```
+
 2. Get  Account Details api [GET]:
-  -	This endpoint is used to get  the account detail for a accountId.
-    Request:
+  - This endpoint is used to get  the account detail for a accountId.
+* Request:
         Header - accountId: <Account number generated in create call> e.g: 1618755265713
         URL : http://localhost:<server.port>/account
-        
-    Response:
-		    {
-		  "accountId": "1618755265713",
-		  "customerId": "lkachhwah",
-		  "country": "India",
-		  "openedOnDate": "2021-04-17T18:30:00.000+00:00",
-		  "balanceInDifferentCurrency": [
-		    {
-		      "amount": 82.6348,
-		      "currency": "EUR"
-		    },
-		    {
-		      "amount": 840.2864,
-		      "currency": "SEK"
-		    },
-		    {
-		      "amount": 99.56,
-		      "currency": "USD"
-		    }
-		  ]
-		}
+* Response:
+{
+   "accountId":"1618755265713",
+   "customerId":"lkachhwah",
+   "country":"India",
+   "openedOnDate":"2021-04-17T18:30:00.000+00:00",
+   "balanceInDifferentCurrency":[
+      {
+         "amount":82.6348,
+         "currency":"EUR"
+      },
+      {
+         "amount":840.2864,
+         "currency":"SEK"
+      },
+      {
+         "amount":99.56,
+         "currency":"USD"
+      }
+   ]
+}
 ~~~
 
 ### Transaction Operation Details :
