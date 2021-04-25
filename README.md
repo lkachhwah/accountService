@@ -1,23 +1,25 @@
-#Pre install software need:
-Rabbit MQ
-MVN
-Java 8 JDK
+# Pre install software need:
+~~~
+* Rabbit MQ
+* MVN
+* Java 8 JDK
+~~~
 
 #Steps To Run:
 ~~~
 1.check out Project from repository : https://github.com/lkachhwah/accountService.git ,using git .
 2.Check above Software are installed and keep rabbit MQ up and running.
 3. Go to application.properties 
-  Update RabbitMq property :
-    reportservice.topic.name=myTestQueue
-    accountservice.exchange.name=myTestQueueExchange
-    accountservice.topic.name=myTestQueue
-    accountservice.routing.key=myTestQueueKey
+  * Update RabbitMq property :
+	    reportservice.topic.name=myTestQueue
+	    accountservice.exchange.name=myTestQueueExchange
+	    accountservice.topic.name=myTestQueue
+	    accountservice.routing.key=myTestQueueKey
   
-  Update Currency Exchange rate property :
-    accountservice.exchange.rate.usd.to.eur=0.83
-    accountservice.exchange.rate.usd.to.sek=8.44
-    accountservice.exchange.rate.usd.to.gbp=0.72
+  * Update Currency Exchange rate property :
+	    accountservice.exchange.rate.usd.to.eur=0.83
+	    accountservice.exchange.rate.usd.to.sek=8.44
+	    accountservice.exchange.rate.usd.to.gbp=0.72
 
 4. Go to the path where project is checkout and run command "mvn clean install"
 5. Once build is ready run application using command : java -jar accountservice-0.0.1-SNAPSHOT.jar
